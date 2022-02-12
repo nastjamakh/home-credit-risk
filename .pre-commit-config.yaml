@@ -1,0 +1,28 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+      - id: check-added-large-files
+        args: ['--maxkb=20000']
+  - repo: local
+    hooks:
+      # syntax
+      - id: black
+        name: black
+        entry: poetry run black -- bin src tests
+        language: system
+        types: [python]
+      - id: flake8
+        name: flake8
+        entry: poetry run flake8
+        language: system
+        pass_filenames: true
+        types: [python]
+      # syntax for .devOps
+      # - id: validate-circleci-config
+      #   name: Validate CircleCI Config
+      #   language: system
+      #   entry: "circleci config validate"
+      #   files: ".circleci/config.yml"

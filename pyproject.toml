@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "mars-venus"
+version = "0.1.0"
+description = ""
+authors = ["nastjamakh <nastja.makhonina.dev@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+matplotlib = "^3.5.1"
+tqdm = "^4.62.3"
+seaborn = "^0.11.2"
+plotly = "^5.5.0"
+pandas = "^1.3.5"
+jupyter = "^1.0.0"
+ipython = "^7.30.1"
+flake8 = "^4.0.1"
+black = "^21.12b0"
+python-dotenv = "^0.19.2"
+pre-commit = "^2.16.0"
+missingno = "^0.5.0"
+scikit-learn = "^1.0.1"
+imblearn = "^0.0"
+imbalanced-learn = "^0.8.1"
+
+streamlit = "^1.3.0"
+
+lightgbm = "^3.3.1"
+xgboost = "^1.5.1"
+
+Theano-PyMC = "^1.1.2"
+pymc3 = "^3.11.4"
+Theano = "^1.0.5"
+pystan = "^3.3.0"
+llvmlite = "^0.37.0"
+numba = "^0.54.1"
+shap = "^0.40.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
