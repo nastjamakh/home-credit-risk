@@ -8,13 +8,12 @@ elif docker ps -a |grep " $PROJECT_NAME$" ; then
 else
   docker run -i -d \
             -v $HOME/.ssh:/home/jumbo/.ssh \
-            -v `pwd`:/app/$PROJECT_NAME/src \
-            -w /app/$PROJECT_NAME/src \
+            -v `pwd`:/app/$PROJECT_NAME \
             --add-host=host.docker.internal:host-gateway \
             -p 8012:8012 \
             -p 7777:7777 \
             --name $PROJECT_NAME \
-            -t $PROJECT_NAME:latest \
+            -t nastjamakh/$PROJECT_NAME:latest \
             /bin/bash
   docker exec -i -t $PROJECT_NAME poetry install
 fi

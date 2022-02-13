@@ -5,6 +5,7 @@ RUN apt-get update && \
     apt-get -y install curl build-essential openssh-client
 
 ENV WORKDIR /app/home-credit
+ENV PYTHONPATH $PYTHONPATH:$WORKDIR/src
 WORKDIR $WORKDIR
 
 RUN groupadd --gid 1000 jumbo

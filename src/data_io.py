@@ -23,11 +23,13 @@ class DatasetFilename(Enum):
             raise ValueError(f"No such dataset: {name}")
 
 
-class DataIO:
+class Datasets:
 
     DATASETS = [
         name.split(".")[0].lower() for name, _ in DatasetFilename.__members__.items()
     ]
+
+    DESCRIPTIONS_FILENAME = "HomeCredit_columns_description.csv"
 
     def __init__(self):
 
@@ -64,6 +66,12 @@ class DataIO:
     def list_loaded(self) -> list:
         return list(self.datasets_.keys())
 
+    def __getitem__(self, dataset_name: str) -> pd.DataFrame:
+        assert dataset_name in self.datasets_, f"Dataset {dataset_name} is not loaded."
+        return self.datasets_[dataset_name]
+
     @classmethod
-    def aggregate(cls):
-        pass
+    def describe_columns(cls, dataset_name: str) -> pd.DataFrame:
+        return pd.read_csv(
+            data_dir() / cls.DESCRIPTIONS_FILENAME, encoding="utf-8"
+        ).query("table == @dataset_name")[["row", "description"]]

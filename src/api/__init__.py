@@ -8,8 +8,6 @@ from typing import Dict, Any, Callable
 from . import main
 import config
 
-# from src.configs import settings
-
 # Setup timezone info
 os.environ["TZ"] = config.TIMEZONE
 time.tzset()
