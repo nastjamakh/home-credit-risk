@@ -15,7 +15,7 @@ USER jumbo
 # install & configure poetry
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 ENV PATH="/home/jumbo/.poetry/bin:${PATH}"
-COPY pyproject.toml poetry.lock  $WORKDIR/
+COPY pyproject.toml poetry.lock $WORKDIR/
 RUN poetry install
 
 # RUN sudo apt-get install nodejs

@@ -6,4 +6,4 @@ docker exec -i -t  ${PROJECT_NAME} \
   --ip="*" \
   --port=7777 \
   --NotebookApp.token=''  \
-  --NotebookApp.custom_display_url=http://localhost:2139
+  --NotebookApp.custom_display_url=http://localhost:7777

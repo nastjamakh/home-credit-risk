@@ -8,9 +8,10 @@ elif docker ps -a |grep " $PROJECT_NAME$" ; then
 else
   docker run -i -d \
             -v $HOME/.ssh:/home/jumbo/.ssh \
-            -v `pwd`:/app/$PROJECT_NAME \
+            -v `pwd`:/app/$PROJECT_NAME/src \
+            -w /app/$PROJECT_NAME/src \
             --add-host=host.docker.internal:host-gateway \
-            -p 9999:9999 \
+            -p 8012:8012 \
             -p 7777:7777 \
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
