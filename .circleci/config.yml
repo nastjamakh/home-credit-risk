@@ -10,7 +10,7 @@ executors:
   in_docker_image:
     docker:
       - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
-    working_directory: /opt/home-credit-risk
+    working_directory: /app/home-credit-risk
   python:
     docker:
         - image: cimg/python:3.9.12
@@ -30,7 +30,7 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
-
+  
   lint:
     executor: in_docker_image
     steps:
@@ -40,7 +40,6 @@ jobs:
       - run:
           name: Check syntax with black
           command: poetry run black --check -- src tests bin
-
 
   test-and-check-coverage:
     executor: in_docker_image
