@@ -52,7 +52,7 @@ jobs:
     steps:
       - run:
           name: Generate coverage data
-          command: poetry run pytest src
+          command: poetry run pytest
 
   build-and-push-image:
     docker:
@@ -64,7 +64,7 @@ jobs:
 workflows:
   build_and_push_image:
     when:
-      equal: [ conditional-job, << pipeline.git.branch >> ]
+      equal: [ "true", <<pipeline.parameters.rebuild-image>> ]
     jobs:
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
@@ -81,5 +81,4 @@ workflows:
       - build-and-push-image
       - lint:
           requires: ["build-and-push-image"]
-      - test-and-check-coverage:
-          requires: ["build-and-push-image"]
+
