@@ -11,7 +11,7 @@ repos:
       # syntax
       - id: black
         name: black
-        entry: poetry run black -- bin src tests
+        entry: poetry run black
         language: system
         types: [python]
       - id: flake8
