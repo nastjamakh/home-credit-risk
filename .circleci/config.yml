@@ -64,7 +64,7 @@ jobs:
 workflows:
   build_and_push_image:
     when:
-      equal: [ master, << pipeline.git.branch >> ]
+      equal: [ conditional-job, << pipeline.git.branch >> ]
     jobs:
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
