@@ -61,10 +61,11 @@ workflows:
           region: AWS_DEFAULT_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          registry-id: AWS_ECR_REGISTRY_ID
           executor: aws-ecr/default
           platform: linux/amd64
           public-registry: true
-          repo: i9f8r4q1/home-credit-risk
+          repo: home-credit-risk
           skip-when-tags-exist: false
       - lint:
           requires: ["aws-ecr/build-and-push-image"]
