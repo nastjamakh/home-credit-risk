@@ -64,7 +64,7 @@ workflows:
           executor: aws-ecr/default
           platform: linux/amd64
           public-registry: true
-          repo: public.ecr.aws/i9f8r4q1/home-credit-risk
+          repo: i9f8r4q1/home-credit-risk
           tag: latest
           skip-when-tags-exist: false
       - lint:
