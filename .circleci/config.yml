@@ -6,6 +6,12 @@ orbs:
   aws-cli: circleci/aws-cli@2.0.3
   aws-ecr: circleci/aws-ecr@8.0.0
 
+
+parameters:
+  rebuild-image:
+    type: string
+    default: "false"
+
 executors:
   in_docker_image:
     docker:
@@ -36,10 +42,10 @@ jobs:
     steps:
       - run:
           name: Check syntax with flake8
-          command: poetry run flake8
+          command: poetry run flake8 --max-line-length=100
       - run:
           name: Check syntax with black
-          command: poetry run black --check -- src tests bin
+          command: poetry run black src
 
   test-and-check-coverage:
     executor: in_docker_image
