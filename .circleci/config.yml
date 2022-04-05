@@ -49,9 +49,12 @@ jobs:
           name: Generate coverage data
           command: poetry run pytest --cov=src
 
-  build-and-push-image:
+  build:
     docker:
-        - image: cimg/python:3.9.12
+        - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
+          aws_auth:
+            aws_access_key_id: $AWS_ACCESS_KEY_ID
+            aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
     steps:
       - checkout
 
@@ -62,8 +65,9 @@ workflows:
   say-hello-workflow:
     jobs:
       - say-hello
-  build-test-push:
+  main:
     jobs:
+      - build
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
