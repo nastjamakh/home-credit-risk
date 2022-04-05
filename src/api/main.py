@@ -2,7 +2,7 @@
 import fastapi
 from fastapi.responses import JSONResponse
 
-from .schemas import ApplicationData, ResponseData
+from .schemas import ResponseData
 
 router = fastapi.APIRouter()
 

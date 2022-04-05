@@ -2,7 +2,6 @@
 import os
 import time
 import fastapi
-from fastapi.responses import JSONResponse
 from typing import Dict, Any, Callable
 
 from . import main
