@@ -52,6 +52,9 @@ jobs:
   build:
     docker:
         - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
+          environment:
+            AWS_REGION: us-east-1
+            AWS_DEFAULT_REGION: us-east-1
           aws_auth:
             aws_access_key_id: $AWS_ACCESS_KEY_ID
             aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
