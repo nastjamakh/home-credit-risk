@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: "${PROJECT_NAME:=home-credit}"
+: "${PROJECT_NAME:=home-credit-risk}"
 
 if  docker ps | grep " $PROJECT_NAME$"; then
     docker kill $PROJECT_NAME
