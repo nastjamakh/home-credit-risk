@@ -2,6 +2,23 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+orbs:
+  aws-cli: circleci/aws-cli@2.0.3
+  aws-ecr: circleci/aws-ecr@7.0.0
+  aws-eks: circleci/aws-eks@1.1.0
+
+executors:
+  in_docker_image:
+    docker:
+      - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
+    working_directory: /opt/home-credit-risk
+  python:
+    docker:
+        - image: circleci/python:3.9.12-slim
+          auth:
+              username: $DOCKERHUB_USERNAME
+              password: $DOCKERHUB_PASSWORD
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -18,9 +35,58 @@ jobs:
           name: "Say hello"
           command: "echo Hello, World!"
 
+  lint:
+    executor: in_docker_image
+    steps:
+      - run:
+          name: Check syntax with flake8
+          command: poetry run flake8
+      - run:
+          name: Check syntax with black
+          command: poetry run black --check -- src tests bin
+
+
+  test-and-check-coverage:
+    executor: in_docker_image
+    steps:
+      - run:
+          name: Generate coverage data
+          command: poetry run pytest --cov=src
+
+  build-and-push-image:
+    docker:
+        - image: circleci/python:3.9.12-slim
+          auth:
+              username: $DOCKERHUB_USERNAME
+              password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: login to hub.docker.com
+          command: echo ${DOCKERHUB_PASSWORD} | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
+      - aws-ecr/build-and-push-image:
+          region: AWS_DEFAULT_REGION
+          repo: public.ecr.aws/i9f8r4q1/home-credit-risk
+          tag: latest
+
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   say-hello-workflow:
     jobs:
       - say-hello
+  build-test-push:
+    jobs:
+      - build-and-push-image:
+          context:
+            - global-production
+            - dockerhub
+      - lint:
+          context: global-production
+          requires: ["build-and-push-image"]
+      - test-and-check-coverage:
+          context: global-production
+          requires: ["build-and-push-image"]

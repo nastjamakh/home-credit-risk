@@ -21,8 +21,8 @@ repos:
         pass_filenames: true
         types: [python]
       # syntax for .devOps
-      # - id: validate-circleci-config
-      #   name: Validate CircleCI Config
-      #   language: system
-      #   entry: "circleci config validate"
-      #   files: ".circleci/config.yml"
+      - id: validate-circleci-config
+        name: Validate CircleCI Config
+        language: system
+        entry: "circleci config validate"
+        files: ".circleci/config.yml"
