@@ -52,7 +52,7 @@ jobs:
     steps:
       - run:
           name: Generate coverage data
-          command: poetry run pytest --cov=src
+          command: poetry run pytest src
 
   build-and-push-image:
     docker:
