@@ -49,19 +49,6 @@ jobs:
           name: Generate coverage data
           command: poetry run pytest --cov=src
 
-  build:
-    docker:
-        - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
-          environment:
-            AWS_REGION: us-east-1
-            AWS_DEFAULT_REGION: us-east-1
-          aws_auth:
-            aws_access_key_id: $AWS_ACCESS_KEY_ID
-            aws_secret_access_key: $AWS_SECRET_ACCESS_KEY
-    steps:
-      - checkout
-
-
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -70,7 +57,6 @@ workflows:
       - say-hello
   main:
     jobs:
-      - build
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
           aws-access-key-id: AWS_ACCESS_KEY_ID
