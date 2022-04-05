@@ -80,9 +80,7 @@ workflows:
       - say-hello
   build-test-push:
     jobs:
-      - build-and-push-image:
-          context:
-            - dockerhub
+      - build-and-push-image
       - lint:
           requires: ["build-and-push-image"]
       - test-and-check-coverage:
