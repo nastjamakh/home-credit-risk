@@ -54,13 +54,17 @@ jobs:
           name: Generate coverage data
           command: poetry run pytest --cov=src
 
+  build-and-push-image:
+    docker:
+      - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
+    steps:
+      - checkout
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
-  main:
+  build_and_push_image:
+    when:
+      equal: [ master, << pipeline.git.branch >> ]
     jobs:
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
@@ -72,7 +76,10 @@ workflows:
           public-registry: true
           repo: home-credit-risk
           skip-when-tags-exist: false
+  main:
+    jobs:
+      - build-and-push-image
       - lint:
-          requires: ["aws-ecr/build-and-push-image"]
+          requires: ["build-and-push-image"]
       - test-and-check-coverage:
-          requires: ["aws-ecr/build-and-push-image"]
+          requires: ["build-and-push-image"]
