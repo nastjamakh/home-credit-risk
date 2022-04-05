@@ -82,11 +82,8 @@ workflows:
     jobs:
       - build-and-push-image:
           context:
-            - global-production
             - dockerhub
       - lint:
-          context: global-production
           requires: ["build-and-push-image"]
       - test-and-check-coverage:
-          context: global-production
           requires: ["build-and-push-image"]
