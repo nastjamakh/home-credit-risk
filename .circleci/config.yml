@@ -4,8 +4,7 @@ version: 2.1
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
-  aws-ecr: circleci/aws-ecr@7.0.0
-  aws-eks: circleci/aws-eks@1.1.0
+  aws-ecr: circleci/aws-ecr@8.0.0
 
 executors:
   in_docker_image:
@@ -55,15 +54,6 @@ jobs:
         - image: cimg/python:3.9.12
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: login to hub.docker.com
-          command: echo ${DOCKERHUB_PASSWORD} | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
-      - aws-ecr/build-and-push-image:
-          region: AWS_DEFAULT_REGION
-          repo: public.ecr.aws/i9f8r4q1/home-credit-risk
-          tag: latest
 
 
 # Invoke jobs via workflows
@@ -74,8 +64,18 @@ workflows:
       - say-hello
   build-test-push:
     jobs:
-      - build-and-push-image
+      - aws-ecr/build-and-push-image:
+          region: AWS_DEFAULT_REGION
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: SECRET_ACCESS_KEY
+          executor: aws-ecr/default
+          role-arn: 'arn:aws:iam::093650613530:role/nastjamakh'
+          platform: linux/amd64
+          public-registry: true
+          repo: public.ecr.aws/i9f8r4q1/home-credit-risk
+          tag: latest
+          skip-when-tags-exist: false
       - lint:
-          requires: ["build-and-push-image"]
+          requires: ["aws-ecr/build-and-push-image"]
       - test-and-check-coverage:
-          requires: ["build-and-push-image"]
+          requires: ["aws-ecr/build-and-push-image"]
