@@ -62,9 +62,11 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build_and_push_image:
+  rebuild_and_push_image:
     when:
-      equal: [true, <<pipeline.parameters.rebuild-image>> ]
+      and:
+        - equal: [true, <<pipeline.parameters.rebuild-image>> ]
+        - or: [ master, << pipeline.git.branch >> ]
     jobs:
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
@@ -78,9 +80,10 @@ workflows:
           skip-when-tags-exist: false
       - lint:
           requires: ["aws-ecr/build-and-push-image"]
-  no_rebuild:
+  no_image_rebuild:
     when:
-      equal: [false, <<pipeline.parameters.rebuild-image>> ]
+      and:
+        - equal: [false, <<pipeline.parameters.rebuild-image>> ]
     jobs:
       - pull-image
       - lint:
