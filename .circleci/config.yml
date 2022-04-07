@@ -88,8 +88,6 @@ workflows:
         - not:
             equal: [master, <<pipeline.git.branch>> ]
     jobs:
-      - pull-image
       - lint:
-          requires: ["pull-image"]
           post-steps:
             - jira/notify

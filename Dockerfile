@@ -2,6 +2,7 @@ FROM python:3.9.12-slim
 
 RUN apt-get update && \
     apt-get upgrade -y && \
+    apt-get -y install sudo && \
     apt-get -y install curl build-essential openssh-client
 
 ENV WORKDIR /app/home-credit-risk
