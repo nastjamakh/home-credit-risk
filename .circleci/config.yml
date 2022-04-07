@@ -9,8 +9,8 @@ orbs:
 
 parameters:
   rebuild-image:
-    type: string
-    default: "false"
+    type: boolean
+    default: false
 
 executors:
   in_docker_image:
@@ -52,15 +52,21 @@ jobs:
     steps:
       - run:
           name: Generate coverage data
-          command: poetry run pytest --cov=src
+          command: poetry run pytest
 
+  pull-image:
+    docker:
+      - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
+    steps:
+      - checkout
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
-  main:
+  rebuild_and_push_image:
+    when:
+      and:
+        - equal: [true, <<pipeline.parameters.rebuild-image>> ]
+        - or: [ master, << pipeline.git.branch >> ]
     jobs:
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
@@ -74,5 +80,11 @@ workflows:
           skip-when-tags-exist: false
       - lint:
           requires: ["aws-ecr/build-and-push-image"]
-      - test-and-check-coverage:
-          requires: ["aws-ecr/build-and-push-image"]
+  no_image_rebuild:
+    when:
+      and:
+        - equal: [false, <<pipeline.parameters.rebuild-image>> ]
+    jobs:
+      - pull-image
+      - lint:
+          requires: ["pull-image"]
