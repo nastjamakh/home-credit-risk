@@ -66,7 +66,7 @@ workflows:
     when:
       or:
         - equal: [true, <<pipeline.parameters.rebuild-image>> ]
-        - equal: [main, <<pipeline.git.branch>> ]
+        - equal: [master, <<pipeline.git.branch>> ]
     jobs:
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
