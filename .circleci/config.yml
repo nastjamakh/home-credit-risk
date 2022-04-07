@@ -84,6 +84,8 @@ workflows:
     when:
       and:
         - equal: [false, <<pipeline.parameters.rebuild-image>> ]
+        - not:
+            equal: [master, <<pipeline.git.branch>> ]
     jobs:
       - pull-image
       - lint:
