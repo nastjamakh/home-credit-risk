@@ -4,6 +4,12 @@ install:
 build:
 	./bin/docker-build.sh
 
+image-pull:
+	./bin/docker-pull.sh
+
+image-push:
+	./bin/docker-push.sh
+
 start:
 	./bin/docker-start.sh
 

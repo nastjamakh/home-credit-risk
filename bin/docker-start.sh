@@ -14,7 +14,7 @@ else
             -p 8012:8012 \
             -p 7777:7777 \
             --name $PROJECT_NAME \
-            -t nastjamakh/$PROJECT_NAME:latest \
+            -t $PROJECT_NAME:latest \
             /bin/bash
   docker exec -i -t $PROJECT_NAME poetry install
 fi
