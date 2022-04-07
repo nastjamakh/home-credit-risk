@@ -5,12 +5,13 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
   aws-ecr: circleci/aws-ecr@8.0.0
+  queue: eddiewebb/queue@1.6.5
 
 
 parameters:
   rebuild-image:
-    type: string
-    default: "false"
+    type: boolean
+    default: false
 
 executors:
   in_docker_image:
@@ -54,7 +55,7 @@ jobs:
           name: Generate coverage data
           command: poetry run pytest
 
-  build-and-push-image:
+  pull-image:
     docker:
       - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
     steps:
@@ -64,7 +65,7 @@ jobs:
 workflows:
   build_and_push_image:
     when:
-      equal: [ "true", <<pipeline.parameters.rebuild-image>> ]
+      equal: [true, <<pipeline.parameters.rebuild-image>> ]
     jobs:
       - aws-ecr/build-and-push-image:
           region: AWS_DEFAULT_REGION
@@ -76,9 +77,12 @@ workflows:
           public-registry: true
           repo: home-credit-risk
           skip-when-tags-exist: false
-  main:
-    jobs:
-      - build-and-push-image
       - lint:
-          requires: ["build-and-push-image"]
-
+          requires: ["aws-ecr/build-and-push-image"]
+  no_rebuild:
+    when:
+      equal: [false, <<pipeline.parameters.rebuild-image>> ]
+    jobs:
+      - pull-image
+      - lint:
+          requires: ["pull-image"]
