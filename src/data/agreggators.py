@@ -1,66 +1,73 @@
 """Module for class-based feature generation."""
-from abc import ABC, abstractmethod
-from typing import List
+import pandas as pd
+import numpy as np
+import gc
+
+from data_io import DataLoader
+from data.transformers import OneHotEncoderWithMemory
 
 
-class DataAggregator(ABC):
-    @abstractmethod
+class TargetData:
+    REQUIRED_DATASETS = ["applications"]
+
+    def __init__(self, data_io: DataLoader):
+        self.data_io = data_io
+
+    def generate_target(self) -> pd.DataFrame:
+        print("Generating target dataset.")
+        df = self.data_io["applications"].copy()
+        self.dataset = df[["sk_id_curr", "target"]]
+        print("Done.")
+
+        return self.dataset
+
+
+class ApplicationFeatures:
+
+    BIN_FEATURES = ["code_gender", "flag_own_car", "flag_own_realty"]
+    REQUIRED_DATASETS = ["applications"]
+
+    def __init__(self, data_io: DataLoader):
+        self.data_io = data_io
+
     @classmethod
-    def name(cls) -> str:
-        """Name."""
-        pass
+    def preprocess(cls, df: pd.DataFrame) -> pd.DataFrame:
+        # Optional: Remove 4 applications with XNA CODE_GENDER (train set)
+        df.drop("target", axis=1, inplace=True)
+        df = df[df["code_gender"] != "XNA"]
 
-    @abstractmethod
-    @classmethod
-    def required_datasets(cls) -> List[str]:
-        pass
+        # Categorical features with Binary encode (0 or 1; two categories)
+        for bin_feature in cls.BIN_FEATURES:
+            df.loc[:, bin_feature], uniques = pd.factorize(df.loc[:, bin_feature])
+        # Categorical features with One-Hot encode
+        encoder = OneHotEncoderWithMemory(nan_category=False)
+        df = encoder.fit_transform(df)
 
-    @abstractmethod
-    @classmethod
-    def feature_names(cls) -> List[str]:
-        pass
+        # NaN values for days_employed: 365.243 -> nan
+        df["days_employed"].replace(365243, np.nan, inplace=True)
 
-    def __init__(self, dataset_dict: dict):
-        passed_datasets = set(dataset_dict.keys())
-        required_datasets = set(self.required_datasets())
+        return df
 
-        assert required_datasets.issubset(
-            passed_datasets
-        ), f"Missing required datasets: {required_datasets - passed_datasets}"
-        assert passed_datasets.issubset(
-            required_datasets
-        ), f"Too many datasets passed: {passed_datasets - required_datasets}"
-
-        self.datasets_ = dataset_dict
-        self.df = None
+    @staticmethod
+    def add_new_features(df):
+        df["days_employed_perc"] = df["days_employed"] / df["days_birth"]
+        df["income_credit_perc"] = df["amt_income_total"] / df["amt_credit"]
+        df["income_per_person"] = df["amt_income_total"] / df["cnt_fam_members"]
+        df["annuity_income_perc"] = df["amt_annuity"] / df["amt_income_total"]
+        df["payment_rate"] = df["amt_annuity"] / df["amt_credit"]
+        return df
 
     def generate_features(self):
-        """Generate all feautres in this set."""
-        for feature_name in self.feature_names():
-            getattr(self, feature_name)()
+        print("Generating applications features.")
+        df = self.data_io["applications"].copy()
+        print("Samples: {}".format(len(df)))
 
+        df = ApplicationFeatures.preprocess(df)
+        df = ApplicationFeatures.add_new_features(df)
 
-class ApartementData(DataAggregator):
-    @classmethod
-    def name(cls) -> str:
-        """Name."""
-        return "apartment"
+        gc.collect()
 
-    @abstractmethod
-    @classmethod
-    def required_datasets(cls) -> List[str]:
-        return ["applications"]
+        self.dataset = df
+        print("Done.")
 
-    @abstractmethod
-    @classmethod
-    def feature_names(cls) -> List[str]:
-        ["apt_size", "num_floors"]
-
-    def __init__(self, dataset_dict: dict):
-        super().__init__(dataset_dict=dataset_dict)
-
-    def feature_apt_size(self):
-        pass
-
-    def feature_num_floors(self):
-        pass
+        return df

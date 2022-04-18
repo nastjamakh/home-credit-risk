@@ -24,3 +24,6 @@ test:
 
 server:
 	./bin/docker-exec.sh ./bin/webserver-start.sh
+
+train:
+	python src/train.py

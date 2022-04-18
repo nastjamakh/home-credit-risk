@@ -32,4 +32,10 @@ def work_dir() -> Path:
 
 
 def data_dir() -> Path:
+    """Get data dir."""
     return work_dir() / "datasets"
+
+
+def model_dir() -> Path:
+    """Get model dir."""
+    return work_dir() / "models"

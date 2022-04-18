@@ -26,6 +26,8 @@ missingno = "^0.5.1"
 pre-commit = "^2.18.1"
 coloredlogs = "^15.0.1"
 tqdm = "^4.64.0"
+pyarrow = "^7.0.0"
+jupyterlab = "^3.3.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

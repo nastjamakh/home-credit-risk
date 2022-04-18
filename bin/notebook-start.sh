@@ -2,7 +2,7 @@
 : "${PROJECT_NAME:=home-credit-risk}"
 
 docker exec -i -t  ${PROJECT_NAME} \
-  poetry run dotenv run jupyter notebook \
+  poetry run dotenv run jupyter lab \
   --ip="*" \
   --port=7777 \
   --NotebookApp.token=''  \

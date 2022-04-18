@@ -11,6 +11,8 @@ __pycache__/
 build/
 downloads/
 datasets/
+models/
+.vscode/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
