@@ -6,31 +6,36 @@ import gc
 from data_io import DataLoader
 from data.transformers import OneHotEncoderWithMemory
 
+from logger import time_and_log
 
-class TargetData:
-    REQUIRED_DATASETS = ["applications"]
 
+class DataAggregator:
     def __init__(self, data_io: DataLoader):
         self.data_io = data_io
 
-    def generate_target(self) -> pd.DataFrame:
-        print("Generating target dataset.")
+    @time_and_log(False)
+    def generate(self):
+        raise NotImplementedError
+
+
+class TargetData(DataAggregator):
+    REQUIRED_DATASETS = ["applications"]
+
+    @time_and_log(False)
+    def generate(self) -> pd.DataFrame:
         df = self.data_io["applications"].copy()
         self.dataset = df[["sk_id_curr", "target"]]
-        print("Done.")
 
         return self.dataset
 
 
-class ApplicationFeatures:
+class ApplicationFeatures(DataAggregator):
 
     BIN_FEATURES = ["code_gender", "flag_own_car", "flag_own_realty"]
     REQUIRED_DATASETS = ["applications"]
 
-    def __init__(self, data_io: DataLoader):
-        self.data_io = data_io
-
     @classmethod
+    @time_and_log(False)
     def preprocess(cls, df: pd.DataFrame) -> pd.DataFrame:
         # Optional: Remove 4 applications with XNA CODE_GENDER (train set)
         df.drop("target", axis=1, inplace=True)
@@ -49,6 +54,7 @@ class ApplicationFeatures:
         return df
 
     @staticmethod
+    @time_and_log(False)
     def add_new_features(df):
         df["days_employed_perc"] = df["days_employed"] / df["days_birth"]
         df["income_credit_perc"] = df["amt_income_total"] / df["amt_credit"]
@@ -57,8 +63,8 @@ class ApplicationFeatures:
         df["payment_rate"] = df["amt_annuity"] / df["amt_credit"]
         return df
 
-    def generate_features(self):
-        print("Generating applications features.")
+    @time_and_log(False)
+    def generate(self):
         df = self.data_io["applications"].copy()
         print("Samples: {}".format(len(df)))
 
@@ -68,6 +74,5 @@ class ApplicationFeatures:
         gc.collect()
 
         self.dataset = df
-        print("Done.")
 
         return df

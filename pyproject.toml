@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "home-credit-risk-risk"
-version = "0.1.0"
+name = "home-credit"
+version = "0.2.0"
 description = ""
 authors = ["nastjamakh <nastja.makhonina.dev@gmail.com>"]
 
@@ -28,6 +28,7 @@ coloredlogs = "^15.0.1"
 tqdm = "^4.64.0"
 pyarrow = "^7.0.0"
 jupyterlab = "^3.3.3"
+click = "^8.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

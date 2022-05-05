@@ -1,5 +1,4 @@
 import joblib
-from lightgbm import LGBMClassifier
 from sklearn.model_selection import cross_val_score
 from datetime import datetime
 from typing import Optional
@@ -9,21 +8,28 @@ import os
 from data.training_data import TrainingData
 from data_io import DataLoader
 from data.agreggators import ApplicationFeatures, TargetData
+from modelling.estimator import Estimator
+
 from config import model_dir
 from logger import logger, time_and_log
 
+CV_SCORING_METRIC = "recall"
+
 
 class TrainingPipeline:
+    """Training pipeline."""
+
     @staticmethod
-    @time_and_log(False)
+    @time_and_log(False, "INFO")
     def generate_training_dataset() -> tuple:
+        """Create training dataset."""
         data_io = DataLoader()
         data_io.load_dataset(dataset_name="applications")
 
         data_generator = TrainingData(
             data_io=data_io,
             target=TargetData,
-            app_data=ApplicationFeatures,
+            features=[ApplicationFeatures],
             merge_on="sk_id_curr",
         )
 
@@ -38,13 +44,14 @@ class TrainingPipeline:
     @classmethod
     @time_and_log(False)
     def train(cls, model_path: Optional[str] = None):
+        """Train."""
         logger.info("Training LGBM classifier.")
 
         X, y = TrainingPipeline.generate_training_dataset()
 
         # train
-        estimator = LGBMClassifier()
-        estimator.fit(X, y)
+        model = Estimator().model
+        model.fit(X, y)
 
         # serialize model
         model_path = (
@@ -55,20 +62,22 @@ class TrainingPipeline:
         if not os.path.exists(model_dir()):
             logger.debug("Creating models folder.")
             os.mkdir(model_dir())
-        joblib.dump(estimator, model_path)
+        joblib.dump(model, model_path)
 
     @classmethod
     @time_and_log(False)
-    def evaluate(cls, cv: int = 5):
+    def evaluate(cls, cv: int = 5, scoring: str = CV_SCORING_METRIC):
+        """Evaluate."""
         logger.info("Evaluating LGBM classifier.")
         X, y = TrainingPipeline.generate_training_dataset()
 
         # train & eval
-        estimator = LGBMClassifier()
-        scores = cross_val_score(estimator, X, y, cv=cv)
+        model = Estimator().model
+        scores = cross_val_score(model, X, y, cv=cv, scoring=scoring)
         logger.warning(
             {
                 "message": "Cross-validation results",
+                "metric": scoring,
                 "cv_scores": scores,
                 "cv_score_mean": np.mean(scores),
             }

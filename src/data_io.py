@@ -10,6 +10,11 @@ from config import data_dir
 from logger import time_and_log
 
 
+def csv_to_parquet(delete_csv: bool = False) -> None:
+    """Convert fiel from csv to parquet."""
+    pass
+
+
 def preprocess_description_data() -> None:
     """Preprocess description data."""
     """Clean up descriptions dataset."""

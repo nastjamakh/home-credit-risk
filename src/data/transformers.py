@@ -6,7 +6,7 @@ import pandas as pd
 class OneHotEncoderWithMemory(TransformerMixin, BaseEstimator):
     """OneHot encoder that stores list of new dummy columns"""
 
-    def __init__(self, nan_category: str = True):
+    def __init__(self, nan_category: bool = True):
         self.nan_category = nan_category
 
     def fit(self, X):
