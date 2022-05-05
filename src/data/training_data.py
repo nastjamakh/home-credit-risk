@@ -1,13 +1,13 @@
 """Module for class-based feature generation."""
 import re
-from typing import List
 from functools import reduce
+from typing import List
+
 import pandas as pd
-
 from data_io import DataLoader
-from data.agreggators import TargetData, DataAggregator
-
 from logger import time_and_log
+
+from data.agreggators import DataAggregator, TargetData
 
 
 class TrainingData:

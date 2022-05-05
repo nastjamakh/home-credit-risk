@@ -1,12 +1,12 @@
 """Module for class-based feature generation."""
-import pandas as pd
-import numpy as np
 import gc
 
+import numpy as np
+import pandas as pd
 from data_io import DataLoader
-from data.transformers import OneHotEncoderWithMemory
-
 from logger import time_and_log
+
+from data.transformers import OneHotEncoderWithMemory
 
 
 class DataAggregator:

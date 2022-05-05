@@ -1,15 +1,13 @@
 """Module for helpful functions not related to API."""
-from typing import Callable, Any
-import logging
-import coloredlogs
 import functools
+import logging
 import time
+from typing import Any, Callable
+
+import coloredlogs
 import numpy as np
 
-from config import (
-    LOGGING_LEVEL,
-)
-
+from config import LOGGING_LEVEL
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(

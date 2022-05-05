@@ -1,10 +1,11 @@
 """Module to load data."""
-import os
 import gc
-import pandas as pd
+import os
 from enum import Enum
-from tqdm import tqdm
 from pathlib import Path
+
+import pandas as pd
+from tqdm import tqdm
 
 from config import data_dir
 from logger import time_and_log
