@@ -24,7 +24,7 @@ def extract_model_timestamp(filename: str) -> str:
     return re.findall(MODEL_FILENAME_PATTERN, filename)[0]
 
 
-def get_latest_model_file_id() -> str:
+def get_latest_model_file_id(s3=False) -> str:
     """Get filename of the latest model created."""
     files = os.listdir(model_dir())
     latest_model_dt = sorted(

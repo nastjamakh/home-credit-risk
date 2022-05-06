@@ -4,7 +4,7 @@ from functools import reduce
 from typing import List
 
 import pandas as pd
-from data_io import DataLoader
+from data_loader import DataLoader
 from logger import time_and_log
 
 from data.agreggators import DataAggregator, TargetData

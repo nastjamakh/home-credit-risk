@@ -6,7 +6,7 @@ from sklearn.model_selection import cross_val_score
 
 from data.agreggators import ApplicationFeatures, TargetData
 from data.training_data import TrainingData
-from data_io import DataLoader
+from data_loader import DataLoader
 from logger import logger, time_and_log
 from modelling.estimator import HomeCreditEstimator
 
@@ -40,9 +40,9 @@ class TrainingPipeline:
 
     @classmethod
     @time_and_log(False)
-    def train(cls, model_path: Optional[str] = None):
+    def train(cls, to_s3: Optional[bool] = False):
         """Train."""
-        logger.info("Training LGBM classifier.")
+        logger.warning(f"Training LGBM classifier. TO S3: {to_s3}")
 
         X, y = TrainingPipeline.generate_training_dataset()
 
@@ -51,8 +51,7 @@ class TrainingPipeline:
         estimator.fit(X, y)
 
         # serialize model
-        estimator.serialize()
-        estimator.to_s3(latest=True)
+        estimator.save(to_s3=to_s3)
 
     @classmethod
     @time_and_log(False)

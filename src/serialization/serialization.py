@@ -5,18 +5,15 @@
     - Model-Zoo
 """
 import functools
+import os
 from pathlib import Path
 from typing import Any
-from datetime import datetime
-import os
 
 import boto3
 import botocore
-import joblib
-
 import config
+import joblib
 from logger import logger, time_and_log
-from modelling import utils
 
 
 @functools.lru_cache()
@@ -55,7 +52,7 @@ class _FileId:
 class ModelSerializer:
     """object <-> file with joblib"""
 
-    def __init__(self, file_id) -> None:
+    def __init__(self, file_id: _FileId) -> None:
         """Initialize."""
         self.file_id = file_id
 
@@ -65,21 +62,22 @@ class ModelSerializer:
 
     def write(self, obj) -> None:
         """Write model to file."""
-        # joblib.dump(obj, self.file_id.to_path())
-        model_path = (
-            config.model_dir()
-            / f"model_{datetime.now().strftime(utils.DATETIME_FORMAT)}.joblib"
+        logger.debug(
+            {
+                "process": "ModelSerializer.write",
+                "message": f"serializing file {self.file_id.to_path()}",
+            }
         )
         if not os.path.exists(config.model_dir()):
             logger.debug("Creating models folder.")
             os.mkdir(config.model_dir())
-        joblib.dump(self.model, model_path)
+        joblib.dump(obj, self.file_id.to_path())
 
 
 class S3Handler:
     """Download / Upload files on S3"""
 
-    def __init__(self, file_id) -> None:
+    def __init__(self, file_id: _FileId) -> None:
         """Initialize."""
         self.file_id = file_id
         s3_config = botocore.client.Config(
@@ -120,14 +118,14 @@ class Serializer:
 
     def __init__(self, file_id: str) -> None:
         self.file_id = _FileId(file_id)
-        self.serializer_ = Serializer.get_correct_serializer(file_id)
+        self.serializer_ = Serializer.get_correct_serializer(self.file_id)
 
     @staticmethod
     def get_correct_serializer(file_id: _FileId):
         file_path = file_id.to_path()
 
         if file_path.suffix == ".joblib":
-            return ModelSerializer(file_id).read()
+            return ModelSerializer(file_id=file_id)
         else:
             raise ValueError("{} not supported".format(file_path.suffix))
 
@@ -168,7 +166,7 @@ class Serializer:
             logger.warning(
                 {
                     "process": "Service.write",
-                    "message": f"Pushed {self.file_id} to S3.",
+                    "message": f"Pushed {self.file_id.to_path()} to S3.",
                     "aws_bucket": config.aws_s3_bucket_name(),
                 }
             )
