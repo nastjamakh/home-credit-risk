@@ -2,6 +2,7 @@
 import os
 import re
 from datetime import datetime
+from pathlib import Path
 
 from config import model_dir
 
@@ -32,3 +33,33 @@ def get_latest_model_file_id(s3=False) -> str:
         reverse=True,
     )[0]
     return model_filename_from_datetime(latest_model_dt)
+
+
+class _FileId:
+    """
+    file_id app/home-credit-risk/models/model_23324.joblib
+    s3_key models/model_23324.joblib
+    path app/home-credit-risk/models/model_23324.joblib
+    """
+
+    def __init__(self, fid: str) -> None:
+        """Initialize."""
+        self.fid = fid
+
+    def to_s3_key(self):
+        """Get associated filepath on S3 bucket.."""
+        dirname = self.fid.parts[-2]
+        filename = self.fid.name
+        return str(os.path.join(dirname, filename))
+
+    def to_path(self):
+        """Get full file path."""
+        return self._project_root() / self.fid
+
+    def _project_root(self):
+        """Get project root."""
+        return Path(__file__).parent.parent
+
+    def __str__(self):
+        """String representation."""
+        return str(self.fid)

@@ -53,6 +53,10 @@ class TrainingPipeline:
         # serialize model
         estimator.save(to_s3=to_s3)
 
+    def load_model(self):
+        estimator = HomeCreditEstimator()
+        estimator.load(from_s3=True)
+
     @classmethod
     @time_and_log(False)
     def evaluate(cls, cv: int = 5, scoring: str = CV_SCORING_METRIC):

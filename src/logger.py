@@ -11,7 +11,7 @@ from config import LOGGING_LEVEL
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(
-    level=LOGGING_LEVEL,
+    level="DEBUG",
     logger=logger,
     fmt="%(asctime)s %(name)s [%(process)d] %(levelname)s %(message)s",
 )

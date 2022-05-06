@@ -1,38 +1,21 @@
 """CLI interface."""
-import click
+import fire
 
 from train import TrainingPipeline
+from data_loader import DataLoader
+from modelling.estimator import HomeCreditEstimator
 
 
-@click.group(help="CLI tool to manage full development cycle of projects")
+class Entrypoint:
+    def __init__(self):
+        self.train = TrainingPipeline()
+        self.data = DataLoader()
+        self.model = HomeCreditEstimator()
+
+
 def cli():
-    """Run cli command."""
-    click.echo("Running Home Credit project CLI interface.")
+    fire.Fire(Entrypoint)
 
-
-@click.command()
-def train():
-    """Run train command."""
-    TrainingPipeline.train()
-
-
-@click.command()
-@click.option("--cv", "-c", default=5, type=int, help="Number of CV")
-@click.option(
-    "--scoring",
-    "-s",
-    default="recall",
-    type=click.Choice(["recall", "precision", "f1"], case_sensitive=True),
-    prompt="Choosing scoring metric",
-    help="Scoring metric for CV",
-)
-def evaluate(cv, scoring):
-    """Run evaluate command."""
-    TrainingPipeline.evaluate(cv, scoring)
-
-
-cli.add_command(train)
-cli.add_command(evaluate)
 
 if __name__ == "__main__":
     cli()

@@ -7,7 +7,7 @@ import serialization.utils as utils
 from config import model_dir
 from lightgbm import LGBMClassifier
 from logger import time_and_log
-from serialization.serialization import Serializer
+from serialization.serializers import Serializer
 
 
 class HomeCreditEstimator:
@@ -35,10 +35,10 @@ class HomeCreditEstimator:
         Serializer(file_id=model_path).write(object=self.model, to_s3=to_s3)
 
     @time_and_log(False)
-    def load(self, latest: bool = True, from_s3: bool = False):
+    def load(self, from_s3: bool = False):
         """Download model from S3."""
         # Load from local file
-        Serializer(latest=True).write(from_s3=from_s3)
+        Serializer().read(from_s3=from_s3)
 
 
 def cli():

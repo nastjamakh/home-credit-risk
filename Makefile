@@ -32,5 +32,5 @@ server:
 	./bin/docker-exec.sh ./bin/webserver-start.sh
 
 train:
-	./bin/docker-exec.sh poetry run python src/entrypoint.py train
+	./bin/docker-exec.sh poetry run train train to_s3=$(to_s3)
 
