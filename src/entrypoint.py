@@ -1,3 +1,4 @@
+"""CLI interface."""
 import click
 
 from train import TrainingPipeline
@@ -5,11 +6,13 @@ from train import TrainingPipeline
 
 @click.group(help="CLI tool to manage full development cycle of projects")
 def cli():
-    click.echo("Hello World!")
+    """Run cli command."""
+    click.echo("Running Home Credit project CLI interface.")
 
 
 @click.command()
 def train():
+    """Run train command."""
     TrainingPipeline.train()
 
 
@@ -24,6 +27,7 @@ def train():
     help="Scoring metric for CV",
 )
 def evaluate(cv, scoring):
+    """Run evaluate command."""
     TrainingPipeline.evaluate(cv, scoring)
 
 

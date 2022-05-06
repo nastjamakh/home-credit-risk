@@ -1,17 +1,14 @@
-import joblib
-from sklearn.model_selection import cross_val_score
-from datetime import datetime
 from typing import Optional
-import numpy as np
-import os
 
+import fire
+import numpy as np
+from sklearn.model_selection import cross_val_score
+
+from data.agreggators import ApplicationFeatures, TargetData
 from data.training_data import TrainingData
 from data_io import DataLoader
-from data.agreggators import ApplicationFeatures, TargetData
-from modelling.estimator import Estimator
-
-from config import model_dir
 from logger import logger, time_and_log
+from modelling.estimator import HomeCreditEstimator
 
 CV_SCORING_METRIC = "recall"
 
@@ -50,19 +47,12 @@ class TrainingPipeline:
         X, y = TrainingPipeline.generate_training_dataset()
 
         # train
-        model = Estimator().model
-        model.fit(X, y)
+        estimator = HomeCreditEstimator()
+        estimator.fit(X, y)
 
         # serialize model
-        model_path = (
-            model_path
-            if model_path is not None
-            else model_dir() / f"model_{datetime.now()}.joblib"
-        )
-        if not os.path.exists(model_dir()):
-            logger.debug("Creating models folder.")
-            os.mkdir(model_dir())
-        joblib.dump(model, model_path)
+        estimator.serialize()
+        estimator.to_s3(latest=True)
 
     @classmethod
     @time_and_log(False)
@@ -72,8 +62,8 @@ class TrainingPipeline:
         X, y = TrainingPipeline.generate_training_dataset()
 
         # train & eval
-        model = Estimator().model
-        scores = cross_val_score(model, X, y, cv=cv, scoring=scoring)
+        estimator = HomeCreditEstimator()
+        scores = cross_val_score(estimator.model, X, y, cv=cv, scoring=scoring)
         logger.warning(
             {
                 "message": "Cross-validation results",
@@ -84,5 +74,10 @@ class TrainingPipeline:
         )
 
 
+def cli():
+    """CLI interface for training and evaluation."""
+    fire.Fire(TrainingPipeline)
+
+
 if __name__ == "__main__":
-    TrainingPipeline.evaluate()
+    cli()

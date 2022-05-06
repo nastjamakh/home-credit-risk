@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  main:
+    build:
+      context: .
+      args:
+        - $HOME=${HOME}
+    platform: linux/amd64
+    ports:
+      - "8000:8012"
+    environment:
+      - PROJECT_NAME=home-credit-risk
+    volumes:
+      - $HOME/.ssh:/home/jumbo/.ssh
+      - $PWD:/app/home-credit-risk
+      - $HOME/.aws/credentials:/home/jumbo/.aws/credentials:ro
+    # entrypoint: [ "poetry", "run", 'home-credit', 'train' ]
+  redis:
+    image: "redis:alpine"

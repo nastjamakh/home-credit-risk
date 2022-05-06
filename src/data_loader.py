@@ -4,6 +4,7 @@ import os
 from enum import Enum
 from pathlib import Path
 
+import fire
 import pandas as pd
 from tqdm import tqdm
 
@@ -134,3 +135,12 @@ class DataLoader:
         return pd.read_csv(
             data_dir() / cls.DESCRIPTIONS_FILENAME, encoding="utf-8"
         ).query("table == @dataset_name")[["row", "description"]]
+
+
+def cli():
+    """CLI interface for Data Loader."""
+    fire.Fire(DataLoader)
+
+
+if __name__ == "__main__":
+    cli()

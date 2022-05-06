@@ -1,8 +1,14 @@
 [tool.poetry]
 name = "home-credit"
-version = "0.2.0"
+version = "0.3.0"
 description = ""
 authors = ["nastjamakh <nastja.makhonina.dev@gmail.com>"]
+
+[tool.poetry.scripts]
+home-credit = "entrypoint:cli"
+train = "train:cli"
+data = "data_loader:cli"
+model = "modelling.estimator:cli"
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.10"
@@ -29,6 +35,8 @@ tqdm = "^4.64.0"
 pyarrow = "^7.0.0"
 jupyterlab = "^3.3.3"
 click = "^8.1.2"
+boto3 = "^1.22.8"
+botocore = "^1.25.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
