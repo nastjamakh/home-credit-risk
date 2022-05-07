@@ -1,11 +1,12 @@
 """Contains the entry point for API."""
 import os
 import time
+from typing import Any, Callable, Dict
+
+import config
 import fastapi
-from typing import Dict, Any, Callable
 
 from . import main
-import config
 
 # Setup timezone info
 os.environ["TZ"] = config.TIMEZONE

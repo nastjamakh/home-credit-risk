@@ -10,6 +10,7 @@ else
             --platform linux/amd64 \
             -v $HOME/.ssh:/home/jumbo/.ssh \
             -v `pwd`:/app/$PROJECT_NAME \
+            -v $HOME/.aws/credentials:/home/jumbo/.aws/credentials:ro \
             --add-host=host.docker.internal:host-gateway \
             -p 8012:8012 \
             -p 7777:7777 \

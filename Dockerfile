@@ -1,4 +1,9 @@
-FROM python:3.9.12-slim
+FROM --platform=$BUILDPLATFORM python:3.9.12-slim
+
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+
+RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /log
 
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -27,3 +32,5 @@ COPY --chown=jumbo:jumbo . $WORKDIR
 
 ARG GIT_COMMIT_HASH
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
+
+EXPOSE 8012

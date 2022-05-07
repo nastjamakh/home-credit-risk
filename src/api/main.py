@@ -6,6 +6,9 @@ from .schemas import ResponseData
 
 router = fastapi.APIRouter()
 
+# TODO: load latest model locally (or S3)
+# TODO:
+
 
 @router.post("/predict", status_code=200, response_model=ResponseData)
 async def predict(

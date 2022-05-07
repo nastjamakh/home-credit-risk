@@ -13,6 +13,17 @@ GIT_COMMIT_HASH = os.getenv("GIT_COMMIT_HASH", "")
 
 WORK_DIR = os.getenv("WORKDIR", "")
 LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET_NAME")
+
+""" getters """
+
+
+def queries_folder():
+    return work_dir() / "src/data/queries"
+
+
+def aws_s3_bucket_name():
+    return "home-credit-risk"
 
 
 """" getters """
@@ -32,4 +43,10 @@ def work_dir() -> Path:
 
 
 def data_dir() -> Path:
+    """Get data dir."""
     return work_dir() / "datasets"
+
+
+def model_dir() -> Path:
+    """Get model dir."""
+    return work_dir() / "models"
