@@ -1,8 +1,11 @@
+import os
+from typing import Optional
+
 import boto3
 import botocore
 import config
-from logger import logger, time_and_log
 import fire
+from logger import logger, time_and_log
 
 from serialization.utils import _FileId
 
@@ -10,9 +13,13 @@ from serialization.utils import _FileId
 class S3Handler:
     """Download / Upload files on S3"""
 
-    def __init__(self, file_id: _FileId) -> None:
+    def __init__(
+        self, file_id: Optional[_FileId] = None, file_type: Optional[str] = None
+    ) -> None:
         """Initialize."""
+        assert not (file_id is None and file_type is None)
         self.file_id = file_id
+        self.file_type = file_type
         s3_config = botocore.client.Config(
             connect_timeout=5, retries={"max_attempts": 5}
         )
@@ -29,19 +36,16 @@ class S3Handler:
 
     def get_latest_file(self, dirname: str) -> str:
         response = self.list_dir(dirname)
-        latest = max(response, key=lambda x: x["LastModified"])
-        return latest.key
+        latest = max(response, key=lambda x: x["LastModified"])["Key"]
+        return latest
 
     @time_and_log(False)
-    def download(self, latest=True, filename=None) -> None:
+    def download(self) -> None:
         """Download from S3."""
-        filepath_local = str(self.file_id.to_path())
-        if latest:
-            dirname = self.file_id.parts[-2]
-            filename_s3 = self.get_latest_file(dirname)
-            filepath_s3 = str(dirname / filename_s3)
-            filepath_local = self.file_id.parent / filename_s3
-        logger.debug(
+        dirname = f"{self.file_type}s"
+        filepath_s3 = self.get_latest_file(dirname)
+        filepath_local = str(filepath_s3)
+        logger.info(
             {
                 "message": "Downloading from S3.",
                 "filepath_local": filepath_local,
@@ -49,13 +53,15 @@ class S3Handler:
                 "bucket": self.bucket_name,
             }
         )
-        self.bucket.download_file(self.file_id.to_s3_key(), filepath_local)
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
+        self.bucket.download_file(filepath_s3, filepath_local)
 
     @time_and_log(False)
     def upload(self) -> None:
         """Push to S3."""
         filepath_local = str(self.file_id.to_path())
-        logger.debug(
+        logger.info(
             {
                 "message": "Uploading to S3.",
                 "filepath_local": filepath_local,
