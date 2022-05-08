@@ -20,9 +20,18 @@ repos:
         language: system
         pass_filenames: true
         types: [python]
+      - id: mypy
+        name: mypy
+        files: ^src/
+        entry: poetry run mypy  --follow-imports=skip --ignore-missing-imports --disallow-untyped-defs -- src
+        language: system
+        pass_filenames: true
+        types: [python]
+        pass_filenames: false
       # syntax for .devOps
       - id: validate-circleci-config
         name: Validate CircleCI Config
         language: system
         entry: "circleci config validate"
         files: ".circleci/config.yml"
+      

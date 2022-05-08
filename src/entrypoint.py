@@ -7,13 +7,16 @@ from modelling.estimator import HomeCreditEstimator
 
 
 class Entrypoint:
-    def __init__(self):
+    """CLI entrypoint."""
+
+    def __init__(self) -> None:
         self.train = TrainingPipeline()
         self.data = DataLoader()
         self.model = HomeCreditEstimator()
 
 
-def cli():
+def cli() -> None:
+    """Function to start cli."""
     fire.Fire(Entrypoint)
 
 

@@ -23,7 +23,7 @@ stop:
 
 # code
 lint:
-	poetry run black -- bin src && poetry run flake8 --max-line-length=90
+	./bin/docker-exec.sh poetry run black -- bin src && poetry run flake8 --max-line-length=90 && poetry run mypy  --follow-imports=skip --ignore-missing-imports --disallow-untyped-defs -- src
 
 test:
 	./bin/docker-exec.sh poetry run pytest -s

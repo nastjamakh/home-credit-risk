@@ -3,6 +3,7 @@ import gc
 import os
 from enum import Enum
 from pathlib import Path
+from typing import Dict
 
 import fire
 import pandas as pd
@@ -52,7 +53,7 @@ class DatasetFilename(Enum):
     CASH_BALANCE = "POS_CASH_balance.gzip"
 
     @classmethod
-    def from_name(cls, name):
+    def from_name(cls, name: str) -> str:
         if hasattr(DatasetFilename, name.upper()):
             return getattr(DatasetFilename, name.upper()).value
         else:
@@ -72,10 +73,10 @@ class DataLoader:
         """Initialize class instance."""
 
         # store loaded datasets
-        self.datasets_ = dict()
+        self.datasets_: Dict[str, pd.DataFrame] = dict()
 
     @staticmethod
-    def preprocess_dataset(df) -> pd.DataFrame:
+    def preprocess_dataset(df: pd.DataFrame) -> pd.DataFrame:
         df.columns = [col.lower() for col in df.columns]
 
         # lowercast all string columns
@@ -137,7 +138,7 @@ class DataLoader:
         ).query("table == @dataset_name")[["row", "description"]]
 
 
-def cli():
+def cli() -> None:
     """CLI interface for Data Loader."""
     fire.Fire(DataLoader)
 

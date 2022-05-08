@@ -25,7 +25,7 @@ def extract_model_timestamp(filename: str) -> str:
     return re.findall(MODEL_FILENAME_PATTERN, filename)[0]
 
 
-def get_latest_model_file_id(s3=False) -> str:
+def get_latest_model_file_id(s3: bool = False) -> str:
     """Get filename of the latest model created."""
     files = os.listdir(model_dir())
     latest_model_dt = sorted(
@@ -42,24 +42,24 @@ class _FileId:
     path app/home-credit-risk/models/model_23324.joblib
     """
 
-    def __init__(self, fid: str) -> None:
+    def __init__(self, fid: Path) -> None:
         """Initialize."""
         self.fid = fid
 
-    def to_s3_key(self):
+    def to_s3_key(self) -> str:
         """Get associated filepath on S3 bucket.."""
         dirname = self.fid.parts[-2]
         filename = self.fid.name
         return str(os.path.join(dirname, filename))
 
-    def to_path(self):
+    def to_path(self) -> Path:
         """Get full file path."""
         return self._project_root() / self.fid
 
-    def _project_root(self):
+    def _project_root(self) -> Path:
         """Get project root."""
         return Path(__file__).parent.parent
 
-    def __str__(self):
+    def __str__(self) -> str:
         """String representation."""
         return str(self.fid)

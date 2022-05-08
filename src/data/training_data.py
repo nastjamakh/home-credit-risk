@@ -16,7 +16,7 @@ class TrainingData:
         data_io: DataLoader,
         target: TargetData,
         features: List[DataAggregator],
-        merge_on="sk_id_curr",
+        merge_on: str = "sk_id_curr",
     ):
         """Initialize."""
         self.target = target(data_io=data_io)
@@ -28,14 +28,14 @@ class TrainingData:
         self.merge_on = merge_on
 
     @time_and_log(False)
-    def post_process(self):
+    def post_process(self) -> None:
         """Remove special characters form column names."""
-        self.training_data = self.training_data.rename(
+        self.training_data: pd.DataFrame = self.training_data.rename(
             columns=lambda x: re.sub("[^A-Za-z0-9_]+", "", x)
         )
 
     @time_and_log(False)
-    def generate_training_dataset(self):
+    def generate_training_dataset(self) -> pd.DataFrame:
         print("Generating training dataset.")
         self.target.generate()
         for feature in self.features:

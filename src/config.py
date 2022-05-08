@@ -18,11 +18,11 @@ AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET_NAME")
 """ getters """
 
 
-def queries_folder():
+def queries_folder() -> Path:
     return work_dir() / "src/data/queries"
 
 
-def aws_s3_bucket_name():
+def aws_s3_bucket_name() -> str:
     return "home-credit-risk"
 
 

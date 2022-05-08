@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import fire
 import numpy as np
 from sklearn.model_selection import cross_val_score
+import pandas as pd
 
 from data.agreggators import ApplicationFeatures, TargetData
 from data.training_data import TrainingData
@@ -18,7 +19,7 @@ class TrainingPipeline:
 
     @staticmethod
     @time_and_log(False, "INFO")
-    def generate_training_dataset() -> tuple:
+    def generate_training_dataset() -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Create training dataset."""
         data_io = DataLoader()
         data_io.load_dataset(dataset_name="applications")
@@ -40,7 +41,7 @@ class TrainingPipeline:
 
     @classmethod
     @time_and_log(False)
-    def train(cls, to_s3: Optional[bool] = False):
+    def train(cls, to_s3: Optional[bool] = False) -> None:
         """Train."""
         logger.warning(f"Training LGBM classifier. TO S3: {to_s3}")
 
@@ -53,13 +54,13 @@ class TrainingPipeline:
         # serialize model
         estimator.save(to_s3=to_s3)
 
-    def load_model(self):
+    def load_model(self) -> None:
         estimator = HomeCreditEstimator()
         estimator.load(from_s3=True)
 
     @classmethod
     @time_and_log(False)
-    def evaluate(cls, cv: int = 5, scoring: str = CV_SCORING_METRIC):
+    def evaluate(cls, cv: int = 5, scoring: str = CV_SCORING_METRIC) -> None:
         """Evaluate."""
         logger.info("Evaluating LGBM classifier.")
         X, y = TrainingPipeline.generate_training_dataset()
@@ -77,7 +78,7 @@ class TrainingPipeline:
         )
 
 
-def cli():
+def cli() -> None:
     """CLI interface for training and evaluation."""
     fire.Fire(TrainingPipeline)
 

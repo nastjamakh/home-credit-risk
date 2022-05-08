@@ -10,11 +10,11 @@ from data.transformers import OneHotEncoderWithMemory
 
 
 class DataAggregator:
-    def __init__(self, data_io: DataLoader):
+    def __init__(self, data_io: DataLoader) -> None:
         self.data_io = data_io
 
     @time_and_log(False)
-    def generate(self):
+    def generate(self) -> None:
         raise NotImplementedError
 
 
@@ -55,7 +55,7 @@ class ApplicationFeatures(DataAggregator):
 
     @staticmethod
     @time_and_log(False)
-    def add_new_features(df):
+    def add_new_features(df: pd.DataFrame) -> pd.DataFrame:
         df["days_employed_perc"] = df["days_employed"] / df["days_birth"]
         df["income_credit_perc"] = df["amt_income_total"] / df["amt_credit"]
         df["income_per_person"] = df["amt_income_total"] / df["cnt_fam_members"]
@@ -64,7 +64,7 @@ class ApplicationFeatures(DataAggregator):
         return df
 
     @time_and_log(False)
-    def generate(self):
+    def generate(self) -> pd.DataFrame:
         df = self.data_io["applications"].copy()
         print("Samples: {}".format(len(df)))
 

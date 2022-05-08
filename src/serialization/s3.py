@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 import boto3
 import botocore
@@ -13,13 +12,8 @@ from serialization.utils import _FileId
 class S3Handler:
     """Download / Upload files on S3"""
 
-    def __init__(
-        self, file_id: Optional[_FileId] = None, file_type: Optional[str] = None
-    ) -> None:
+    def __init__(self) -> None:
         """Initialize."""
-        assert not (file_id is None and file_type is None)
-        self.file_id = file_id
-        self.file_type = file_type
         s3_config = botocore.client.Config(
             connect_timeout=5, retries={"max_attempts": 5}
         )
@@ -27,7 +21,7 @@ class S3Handler:
         self.bucket_name = config.aws_s3_bucket_name()
         self.bucket = self.s3.Bucket(self.bucket_name)
 
-    def list_dir(self, dirname: str):
+    def list_dir(self, dirname: str) -> list:
 
         response = boto3.client("s3").list_objects_v2(
             Bucket=self.bucket_name, Prefix=dirname
@@ -40,9 +34,9 @@ class S3Handler:
         return latest
 
     @time_and_log(False)
-    def download(self) -> None:
+    def download(self, file_type: str) -> None:
         """Download from S3."""
-        dirname = f"{self.file_type}s"
+        dirname = f"{file_type}s"
         filepath_s3 = self.get_latest_file(dirname)
         filepath_local = str(filepath_s3)
         logger.info(
@@ -58,23 +52,23 @@ class S3Handler:
         self.bucket.download_file(filepath_s3, filepath_local)
 
     @time_and_log(False)
-    def upload(self) -> None:
+    def upload(self, file_id: _FileId) -> None:
         """Push to S3."""
-        filepath_local = str(self.file_id.to_path())
+        filepath_local = str(file_id.to_path())
         logger.info(
             {
                 "message": "Uploading to S3.",
                 "filepath_local": filepath_local,
-                "filepath_s3": self.file_id.to_s3_key(),
+                "filepath_s3": file_id.to_s3_key(),
                 "bucket": self.bucket_name,
             }
         )
         self.s3.meta.client.upload_file(
-            filepath_local, self.bucket_name, self.file_id.to_s3_key()
+            filepath_local, self.bucket_name, file_id.to_s3_key()
         )
 
 
-def cli():
+def cli() -> None:
     """CLI interface for training and evaluation."""
     fire.Fire(S3Handler)
 
