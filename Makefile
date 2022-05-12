@@ -21,6 +21,9 @@ start:
 stop:
 	./bin/docker-remove.sh
 
+notebook:
+	./bin/notebook-start.sh
+
 # code
 lint:
 	./bin/docker-exec.sh poetry run black -- bin src && poetry run flake8 --max-line-length=90 && poetry run mypy  --follow-imports=skip --ignore-missing-imports --disallow-untyped-defs -- src
