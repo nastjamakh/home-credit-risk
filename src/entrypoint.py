@@ -3,7 +3,7 @@ import fire
 
 from train import TrainingPipeline
 from data_loader import DataLoader
-from modelling.estimator import HomeCreditEstimator
+from modelling.estimator import HeuristicEstimator
 
 
 class Entrypoint:
@@ -12,7 +12,7 @@ class Entrypoint:
     def __init__(self) -> None:
         self.train = TrainingPipeline()
         self.data = DataLoader()
-        self.model = HomeCreditEstimator()
+        self.model = HeuristicEstimator()
 
 
 def cli() -> None:
