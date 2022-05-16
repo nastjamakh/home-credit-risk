@@ -32,7 +32,7 @@ class ApplicationFeatures(DataAggregator):
     REQUIRED_DATASETS = ["applications"]
 
     @classmethod
-    def remove_columns_missing_values(
+    def handle_missing_values(
         cls, df: pd.DataFrame, max_pct_missing: int = 40
     ) -> pd.DataFrame:
         df_missing_pct = (
@@ -59,7 +59,7 @@ class ApplicationFeatures(DataAggregator):
         df.drop("target", axis=1, inplace=True)
         df = df.select_dtypes("number")
 
-        df = cls.remove_columns_missing_values(df)
+        df = cls.handle_missing_values(df)
         df = cls.handle_outliers(df)
 
         return df
