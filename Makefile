@@ -1,3 +1,24 @@
+#PYTHON_INTERPRETER = {{ cookiecutter.python_interpreter }}
+#SHELL = {{ cookiecutter.shell_environment }}
+PROJECT_NAME = "home-credit-risk"
+
+setup:
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	setup_pyenv
+
+## Set up python interpreter environment
+setup_pyenv:
+	brew install zsh
+	brew install openssl readline sqlite3 xz zlib
+	brew install pyenv pyenv-virtualenv
+	echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+	echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+	echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+	pyenv install 3.10.4
+	pyenv virtualenv 3.10.4 $(PROJECT_NAME)
+	pyenv local $(PROJECT_NAME)
+	@echo ">>> New pyenv virtualenv created. Activate with:pyenv local $(PROJECT_NAME)"
+
 # poetry
 install:
 	./bin/docker-exec.sh poetry install
