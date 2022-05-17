@@ -4,7 +4,7 @@ from typing import Dict, Any, Callable
 
 from . import main
 import config
-from modelling.estimator import NaiveEstimator
+from logger import logger
 
 # Initialize FastAPI
 app = fastapi.FastAPI(
@@ -21,8 +21,7 @@ app.include_router(main.router)
 @app.on_event("startup")
 async def startup() -> None:
     """Code to run at the startup of the app like loading env variables."""
-    model = NaiveEstimator().load()
-    print(model)
+    logger.info("Ready to accept applications.")
 
 
 @app.on_event("shutdown")

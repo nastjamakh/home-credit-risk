@@ -2,7 +2,7 @@
 from pydantic import BaseModel, validator
 
 
-class ApplicationData(BaseModel):
+class ApplicationSingle(BaseModel):
     """Request schema."""
 
     sk_id_curr: int
@@ -164,6 +164,18 @@ class ApplicationData(BaseModel):
                 "weekday_appr_process_start": "wednesday",
             }
         }
+
+
+class ApplicationData(BaseModel):
+    """Multiple applications."""
+
+    applications: list[ApplicationSingle] = []
+
+    @validator("applications")
+    def check_applications(cls, applications: list) -> list[dict]:
+        """Verify city is supported."""
+        applications_list = [dict(app) for app in applications]
+        return applications_list
 
 
 class ResponseData(BaseModel):

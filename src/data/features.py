@@ -26,9 +26,11 @@ class ApplicationFeatures:
 
     REQUIRED_DATASETS = ["applications"]
 
-    def __init__(self, data_io: DataLoader, flow: str = "train"):
+    def __init__(self, data_io: Optional[DataLoader] = None, flow: str = "train"):
+        if flow == "train":
+            assert data_io is not None
+            self.data_io = data_io
         self.flow_ = flow
-        self.data_io = data_io
 
     def handle_missing_values(
         self, df: pd.DataFrame, max_pct_missing: int = 40

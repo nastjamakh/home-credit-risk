@@ -2,9 +2,26 @@
 #SHELL = {{ cookiecutter.shell_environment }}
 PROJECT_NAME = "home-credit-risk"
 
-setup:
+PYTHON_INTERPRETER = python3
+SHELL = zsh
+PROJECT_NAME = "home-credit-risk"
+
+setup_dev:
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	setup_pyenv
+
+setup_local:
+	make setup_dev
+	make setup_pyenv
+	make create_env
+	pip install poetry
+	poetry install
+	pip install wheel
+	poetry add `cat requirements.txt`
+
+setup_docker:
+	make setup_dev
+	./bin/docker-exec.sh poetry install
+	./bin/docker-exec.sh poetry add `cat requirements.txt`
 
 ## Set up python interpreter environment
 setup_pyenv:
@@ -15,6 +32,8 @@ setup_pyenv:
 	echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
 	echo 'eval "$(pyenv init -)"' >> ~/.zshrc
 	pyenv install 3.10.4
+
+create_env:
 	pyenv virtualenv 3.10.4 $(PROJECT_NAME)
 	pyenv local $(PROJECT_NAME)
 	@echo ">>> New pyenv virtualenv created. Activate with:pyenv local $(PROJECT_NAME)"
