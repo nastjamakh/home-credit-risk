@@ -1,34 +1,28 @@
 """Contains the entry point for API."""
-import os
-import time
 import fastapi
 from typing import Dict, Any, Callable
 
 from . import main
-from src.configs import settings
-
-# Setup timezone info
-os.environ["TZ"] = settings.TIMEZONE
-time.tzset()
+import config
+from modelling.estimator import NaiveEstimator
 
 # Initialize FastAPI
 app = fastapi.FastAPI(
-    title=settings.TITLE,
-    description=settings.DESCRIPTION,
-    debug=settings.DEBUG,
+    title=config.TITLE,
+    description=config.DESCRIPTION,
+    debug=config.DEBUG,
 )
 
 
 app.include_router(main.router)
-
-settings.start_sentry()
 
 
 # TODO: compute city geocodes on start to process requests faster
 @app.on_event("startup")
 async def startup() -> None:
     """Code to run at the startup of the app like loading env variables."""
-    pass
+    model = NaiveEstimator().load()
+    print(model)
 
 
 @app.on_event("shutdown")
@@ -54,7 +48,7 @@ async def authorize(request: fastapi.Request, call_next: Callable) -> Dict[str, 
         )
 
     # authorize the request
-    if request_key not in settings.api_keys():
+    if request_key not in config.api_keys():
         return fastapi.responses.JSONResponse(
             status_code=403,
             content={"_error": "Contact #data-products for a valid API KEY"},

@@ -4,7 +4,7 @@ import fire
 from sklearn.model_selection import cross_validate
 import pandas as pd
 
-from data.agreggators import ApplicationFeatures, TargetData
+from data.features import ApplicationFeatures, TargetData
 from data.training_data import TrainingData
 from data_loader import DataLoader
 from logger import logger, time_and_log
