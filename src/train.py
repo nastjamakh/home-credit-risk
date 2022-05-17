@@ -1,15 +1,14 @@
 from typing import Optional, Tuple
 
 import fire
-import numpy as np
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_validate
 import pandas as pd
 
-from data.agreggators import ApplicationFeatures, TargetData
+from data.features import ApplicationFeatures, TargetData
 from data.training_data import TrainingData
 from data_loader import DataLoader
 from logger import logger, time_and_log
-from modelling.estimator import HomeCreditEstimator
+from modelling.estimator import NaiveEstimator
 
 CV_SCORING_METRIC = "recall"
 
@@ -43,37 +42,43 @@ class TrainingPipeline:
     @time_and_log(False)
     def train(cls, to_s3: Optional[bool] = False) -> None:
         """Train."""
-        logger.warning(f"Training LGBM classifier. TO S3: {to_s3}")
+        logger.warning(f"Training Naive classifier. TO S3: {to_s3}")
 
         X, y = TrainingPipeline.generate_training_dataset()
 
         # train
-        estimator = HomeCreditEstimator()
+        estimator = NaiveEstimator()
         estimator.fit(X, y)
 
         # serialize model
         estimator.save(to_s3=to_s3)
 
     def load_model(self) -> None:
-        estimator = HomeCreditEstimator()
+        estimator = NaiveEstimator()
         estimator.load(from_s3=True)
 
     @classmethod
     @time_and_log(False)
-    def evaluate(cls, cv: int = 5, scoring: str = CV_SCORING_METRIC) -> None:
+    def evaluate(cls, cv: int = 5) -> None:
         """Evaluate."""
-        logger.info("Evaluating LGBM classifier.")
+        logger.info("Evaluating Naive classifier.")
         X, y = TrainingPipeline.generate_training_dataset()
 
         # train & eval
-        estimator = HomeCreditEstimator()
-        scores = cross_val_score(estimator.model, X, y, cv=cv, scoring=scoring)
+        estimator = NaiveEstimator()
+        scoring = {
+            "acc": "accuracy",
+            "prec_macro": "precision_macro",
+            "rec_macro": "recall_macro",
+            "rec_micro": "recall_micro",
+            "f1_macro": "f1_macro",
+        }
+        scores = cross_validate(estimator, X, y, cv=cv, scoring=scoring)
         logger.warning(
             {
                 "message": "Cross-validation results",
-                "metric": scoring,
-                "cv_scores": scores,
-                "cv_score_mean": np.mean(scores),
+                "metric": list(scores.keys()),
+                **scores,
             }
         )
 
