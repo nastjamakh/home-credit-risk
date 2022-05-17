@@ -27,6 +27,7 @@ class NaiveEstimator(BaseEstimator):
         self.bins_map: dict = dict()
 
         self.margin = 0
+        self.is_fit = False
 
     @staticmethod
     def get_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -52,6 +53,7 @@ class NaiveEstimator(BaseEstimator):
 
             self.bins_dict[col] = bins_
             self.bins_map[col] = df.groupby(binned).target.mean()
+        self.is_fit = True
 
     def predict_proba(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -91,7 +93,13 @@ class NaiveEstimator(BaseEstimator):
     def load(self, from_s3: bool = False) -> Any:
         """Download model from S3."""
         # Load from local file
-        Serializer().read(file_type="model", from_s3=from_s3)
+        return Serializer().read(file_type="model", from_s3=from_s3)
+
+    # def __str__(self) -> str:
+    #     descr = ""
+    #     if self.is_fit:
+    #         descr = ", ".join([f"{k}={v}" for k, v in self.bins_map.items()])
+    #     return f"NaiveEstimator({descr})"
 
 
 def cli() -> None:

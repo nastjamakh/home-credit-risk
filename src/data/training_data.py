@@ -7,7 +7,7 @@ import pandas as pd
 from data_loader import DataLoader
 from logger import time_and_log
 
-from data.agreggators import DataAggregator, TargetData
+from data.features import DataAggregator, TargetData
 
 
 class TrainingData:
