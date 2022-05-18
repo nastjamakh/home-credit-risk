@@ -6,7 +6,7 @@ import pandas as pd
 
 from data.features import ApplicationFeatures, TargetData
 from data.training_data import TrainingData
-from data_loader import DataLoader
+from data.data_loader import FileDataLoader
 from logger import logger, time_and_log
 from modelling.estimator import NaiveEstimator
 
@@ -20,7 +20,7 @@ class TrainingPipeline:
     @time_and_log(False, "INFO")
     def generate_training_dataset() -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Create training dataset."""
-        data_io = DataLoader()
+        data_io = FileDataLoader()
         data_io.load_dataset(dataset_name="applications")
 
         data_generator = TrainingData(

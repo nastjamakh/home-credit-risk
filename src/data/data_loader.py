@@ -9,7 +9,7 @@ import fire
 import pandas as pd
 from tqdm import tqdm
 
-from config import data_dir
+from config import data_dir, dwh_connection
 from logger import time_and_log
 
 
@@ -60,7 +60,7 @@ class DatasetFilename(Enum):
             raise ValueError(f"No such dataset: {name}")
 
 
-class DataLoader:
+class FileDataLoader:
     """Class to load data from file."""
 
     DATASETS = [
@@ -138,9 +138,36 @@ class DataLoader:
         ).query("table == @dataset_name")[["row", "description"]]
 
 
+class SQLDataLoader:
+    engine = dwh_connection()
+    DATASETS = [
+        name.split(".")[0].lower() for name, _ in DatasetFilename.__members__.items()
+    ]
+
+    @time_and_log(True)
+    def load_dataset(self, dataset_name: str) -> pd.DataFrame:
+        pass
+
+    @time_and_log(False)
+    def load_all(self) -> None:
+        """List all datasets."""
+        pbar = tqdm(self.DATASETS)
+        for dataset in pbar:
+            pbar.set_description(f"Loading dataset: {dataset}")
+            self.load_dataset(dataset_name=dataset)
+
+    @classmethod
+    def list_available(cls) -> list:
+        """List all availbale datasets."""
+        return cls.DATASETS
+
+    def list_loaded(self) -> list:
+        """List all loaded datasets."""
+
+
 def cli() -> None:
     """CLI interface for Data Loader."""
-    fire.Fire(DataLoader)
+    fire.Fire(FileDataLoader)
 
 
 if __name__ == "__main__":

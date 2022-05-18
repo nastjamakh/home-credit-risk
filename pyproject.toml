@@ -42,6 +42,8 @@ mypy = "^0.950"
 metaflow = "^2.6.0"
 prefect = "^1.2.1"
 pyspark = "^3.2.1"
+SQLAlchemy = "^1.4.36"
+sqlalchemy-redshift = "^0.8.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

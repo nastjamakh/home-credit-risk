@@ -2,7 +2,7 @@
 import fire
 
 from train import TrainingPipeline
-from data_loader import DataLoader
+from data.data_loader import FileDataLoader
 from modelling.estimator import HeuristicEstimator
 
 
@@ -11,7 +11,7 @@ class Entrypoint:
 
     def __init__(self) -> None:
         self.train = TrainingPipeline()
-        self.data = DataLoader()
+        self.data = FileDataLoader()
         self.model = HeuristicEstimator()
 
 

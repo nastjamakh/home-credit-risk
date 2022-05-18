@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from typing import List
+import sqlalchemy as sa
 
 TITLE = "DOP Ranking"
 DESCRIPTION = "Rank drop of points based on demand and supply."
@@ -24,6 +25,15 @@ def queries_folder() -> Path:
 
 def aws_s3_bucket_name() -> str:
     return "home-credit-risk"
+
+
+def dwh_connection() -> sa.Engine:
+    user = "admin"
+    host = "ml-cluster.cao3kphpeedo.us-east-1.redshift.amazonaws.com"
+    port = 5439
+    database = "dev"
+    engine = sa.create_engine(f"redshift+psycopg2://{user}@{host}:{port}/{database}")
+    return engine
 
 
 """" getters """

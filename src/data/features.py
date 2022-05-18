@@ -5,13 +5,13 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 from logger import time_and_log
-from data_loader import DataLoader
+from data.data_loader import FileDataLoader
 
 
 class TargetData:
     REQUIRED_DATASETS = ["applications"]
 
-    def __init__(self, data_io: DataLoader):
+    def __init__(self, data_io: FileDataLoader):
         self.data_io = data_io
 
     @time_and_log(False)
@@ -26,7 +26,7 @@ class ApplicationFeatures:
 
     REQUIRED_DATASETS = ["applications"]
 
-    def __init__(self, data_io: Optional[DataLoader] = None, flow: str = "train"):
+    def __init__(self, data_io: Optional[FileDataLoader] = None, flow: str = "train"):
         if flow == "train":
             assert data_io is not None
             self.data_io = data_io
