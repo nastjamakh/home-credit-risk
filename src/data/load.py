@@ -1,9 +1,10 @@
 """Module to load data."""
+from abc import abstractmethod
 import gc
 import os
 from enum import Enum
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 import fire
 import pandas as pd
@@ -50,7 +51,7 @@ class DatasetFilename(Enum):
     CREDIT_CARD_BALANCE = "credit_card_balance.gzip"
     INSTALLMENTS_PAYMENTS = "installments_payments.gzip"
     PREVIOUS_APPLICATIONS = "previous_application.gzip"
-    CASH_BALANCE = "POS_CASH_balance.gzip"
+    CASH_BALANCE = "pos_cash_balance.gzip"
 
     @classmethod
     def from_name(cls, name: str) -> str:
@@ -60,14 +61,29 @@ class DatasetFilename(Enum):
             raise ValueError(f"No such dataset: {name}")
 
 
-class FileDataLoader:
-    """Class to load data from file."""
+class DatasetTablename(Enum):
+    """Map dataset names to table names in database."""
 
+    APPLICATIONS = "application_train"
+    BUREAU_BALANCE = "bureau_balance"
+    BUREAU = "bureau"
+    CREDIT_CARD_BALANCE = "credit_card_balance"
+    INSTALLMENTS_PAYMENTS = "installments_payments"
+    PREVIOUS_APPLICATIONS = "previous_application"
+    CASH_BALANCE = "pos_cash_balance"
+
+    @classmethod
+    def from_name(cls, name: str) -> str:
+        if hasattr(DatasetTablename, name.upper()):
+            return getattr(DatasetTablename, name.upper()).value
+        else:
+            raise ValueError(f"No such dataset: {name}")
+
+
+class DataLoader:
     DATASETS = [
         name.split(".")[0].lower() for name, _ in DatasetFilename.__members__.items()
     ]
-
-    DESCRIPTIONS_FILENAME = "HomeCredit_columns_description_processed.csv"
 
     def __init__(self) -> None:
         """Initialize class instance."""
@@ -76,7 +92,7 @@ class FileDataLoader:
         self.datasets_: Dict[str, pd.DataFrame] = dict()
 
     @staticmethod
-    def preprocess_dataset(df: pd.DataFrame) -> pd.DataFrame:
+    def lowercase_columns(df: pd.DataFrame) -> pd.DataFrame:
         df.columns = [col.lower() for col in df.columns]
 
         # lowercast all string columns
@@ -86,20 +102,10 @@ class FileDataLoader:
                 gc.collect()
         return df
 
-    @time_and_log(True)
+    @abstractmethod
     def load_dataset(self, dataset_name: str) -> pd.DataFrame:
-        assert dataset_name in self.DATASETS, f"Unknown dataset {dataset_name}."
-
-        if dataset_name in self.datasets_:
-            df = self.datasets_[dataset_name]
-        else:
-            df = pd.read_parquet(data_dir() / DatasetFilename.from_name(dataset_name))
-
-            self.datasets_[dataset_name] = df
-
-        df = self.preprocess_dataset(df)
-        gc.collect()
-        return df
+        """Load a dataset by name."""
+        pass
 
     @time_and_log(False)
     def load_all(self) -> None:
@@ -118,18 +124,39 @@ class FileDataLoader:
         """List all loaded datasets."""
         return list(self.datasets_.keys())
 
-    @classmethod
-    def get_dataset_filepath(cls, dataset_name: str) -> Path:
-        """Return filepath of a dataset."""
-        return data_dir() / DatasetFilename.from_name(dataset_name)
-
     def __getitem__(self, dataset_name: str) -> pd.DataFrame:
         """Use class as a dict with keys as dataset names."""
         assert dataset_name in self.datasets_, f"Dataset {dataset_name} is not loaded."
         return self.datasets_[dataset_name]
 
+
+class FileDataLoader(DataLoader):
+    """Class to load data from file."""
+
+    DESCRIPTIONS_FILENAME = "HomeCredit_columns_description_processed.csv"
+
+    @time_and_log(True)
+    def load_dataset(self, dataset_name: str) -> pd.DataFrame:
+        assert dataset_name in self.DATASETS, f"Unknown dataset {dataset_name}."
+
+        if dataset_name in self.datasets_:
+            df = self.datasets_[dataset_name]
+        else:
+            df = pd.read_parquet(data_dir() / DatasetFilename.from_name(dataset_name))
+
+            self.datasets_[dataset_name] = df
+
+        df = self.lowercase_columns(df)
+        gc.collect()
+        return df
+
     @classmethod
-    def describe_columns(cls, dataset_name: str) -> pd.DataFrame:
+    def get_dataset_filepath(cls, dataset_name: str) -> Path:
+        """Return filepath of a dataset."""
+        return data_dir() / DatasetFilename.from_name(dataset_name)
+
+    @classmethod
+    def describe_columns(cls) -> pd.DataFrame:
         """Describe dataset columns."""
         if not os.path.exists(data_dir() / cls.DESCRIPTIONS_FILENAME):
             preprocess_description_data()
@@ -138,31 +165,25 @@ class FileDataLoader:
         ).query("table == @dataset_name")[["row", "description"]]
 
 
-class SQLDataLoader:
+class SQLDataLoader(DataLoader):
+    """Class to load raw data from Redshift database."""
+
     engine = dwh_connection()
-    DATASETS = [
-        name.split(".")[0].lower() for name, _ in DatasetFilename.__members__.items()
-    ]
 
-    @time_and_log(True)
-    def load_dataset(self, dataset_name: str) -> pd.DataFrame:
-        pass
-
-    @time_and_log(False)
-    def load_all(self) -> None:
-        """List all datasets."""
-        pbar = tqdm(self.DATASETS)
-        for dataset in pbar:
-            pbar.set_description(f"Loading dataset: {dataset}")
-            self.load_dataset(dataset_name=dataset)
-
-    @classmethod
-    def list_available(cls) -> list:
-        """List all availbale datasets."""
-        return cls.DATASETS
-
-    def list_loaded(self) -> list:
-        """List all loaded datasets."""
+    def load_dataset(
+        self, dataset_name: str, limit: Optional[int] = None, reload=False
+    ) -> pd.DataFrame:
+        if (dataset_name not in self.datasets_) or reload:
+            with self.engine.connect() as conn:
+                table_name = DatasetTablename.from_name(dataset_name)
+                limit_str = f" limit {limit}" if limit else "limit"
+                df = pd.read_sql(
+                    f"SELECT * FROM public.{table_name}{limit_str}", con=conn
+                )
+                self.datasets_[dataset_name] = df
+        else:
+            df = self.datasets_[dataset_name]
+        return df
 
 
 def cli() -> None:
