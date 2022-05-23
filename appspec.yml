@@ -14,8 +14,9 @@ os: linux
 # (You cannot specify both "os: linux" and "os: windows".)
 files:
   - source: /
-    destination: ~/home-credit-risk
+    destination: home-credit-risk
     overwrite: true
+file_exists_behavior: OVERWRITE
 hooks:
   AfterInstall:
     - location: bin/docker-pull.sh
