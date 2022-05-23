@@ -15,7 +15,7 @@ else
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
             /bin/bash
-  docker exec  -i home-credit-risk poetry install
+  docker exec -i $PROJECT_NAME poetry install
 fi
 
 # download latest model from S3
