@@ -11,6 +11,7 @@ else
             -v $HOME/.ssh:/home/jumbo/.ssh \
             -v `pwd`:/app/$PROJECT_NAME \
             -v $HOME/.aws/credentials:/home/jumbo/.aws/credentials:ro \
+            --env API_KEY=foo \
             --add-host=host.docker.internal:host-gateway \
             -p 8012:8012 \
             -p 7777:7777 \
