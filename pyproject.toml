@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "home-credit"
+name = "home-credit-risk"
 version = "0.3.0"
-description = ""
+description = "End-to-end project for predicting probability of default on home credit loans."
 authors = ["nastjamakh <nastja.makhonina.dev@gmail.com>"]
 
 [tool.poetry.scripts]
@@ -42,6 +42,9 @@ mypy = "^0.950"
 metaflow = "^2.6.0"
 prefect = "^1.2.1"
 pyspark = "^3.2.1"
+SQLAlchemy = "^1.4.36"
+sqlalchemy-redshift = "^0.8.9"
+redshift-connector = "^2.0.907"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

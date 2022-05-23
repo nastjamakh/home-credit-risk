@@ -4,7 +4,7 @@ from functools import reduce
 from typing import List
 
 import pandas as pd
-from data_loader import DataLoader
+from data.data_loader import FileDataLoader
 from logger import time_and_log
 
 from data.features import DataAggregator, TargetData
@@ -13,7 +13,7 @@ from data.features import DataAggregator, TargetData
 class TrainingData:
     def __init__(
         self,
-        data_io: DataLoader,
+        data_io: FileDataLoader,
         target: TargetData,
         features: List[DataAggregator],
         merge_on: str = "sk_id_curr",
