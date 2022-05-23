@@ -12,11 +12,11 @@ os: linux
 #   instances.
 # Specify "os: windows" if this revision targets Windows Server instances.
 # (You cannot specify both "os: linux" and "os: windows".)
-files:
-  - source: /
-    destination: /app/home-credit-risk
-    overwrite: true
-file_exists_behavior: OVERWRITE
+# files:
+#   - source: /
+#     destination: /app/home-credit-risk
+#     overwrite: true
+# file_exists_behavior: OVERWRITE
 hooks:
   BeforeInstall:
     - location: bin/before-install.sh
