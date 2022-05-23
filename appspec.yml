@@ -25,11 +25,11 @@ hooks:
   AfterInstall:
     - location: bin/docker-pull.sh
       timeout: 300
-      runas: root
+      runas: ubuntu
     - location: bin/after-pull.sh
       timeout: 100
-      runas: root
+      runas: ubuntu
   ApplicationStart:
     - location: bin/web-app-start.sh
       timeout: 60
-      runas: root
+      runas: ubuntu
