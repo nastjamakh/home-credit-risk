@@ -6,7 +6,6 @@ if docker ps -a |grep " $PROJECT_NAME$" ; then
     docker start $PROJECT_NAME
 else
   docker run -i -d \
-            --platform linux/amd64 \
             -v $HOME/.ssh:/home/jumbo/.ssh \
             -v `pwd`:/app/$PROJECT_NAME \
             -v $HOME/.aws/credentials:/home/jumbo/.aws/credentials:ro \
@@ -16,6 +15,7 @@ else
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
             /bin/bash
+  docker exec  -i home-credit-risk poetry install
 fi
 
 # download latest model from S3
