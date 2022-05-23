@@ -15,6 +15,7 @@ os: linux
 files:
   - source: /
     destination: ~/home-credit-risk
+    overwrite: true
 hooks:
   AfterInstall:
     - location: bin/docker-pull.sh
