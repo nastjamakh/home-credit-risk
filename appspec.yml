@@ -28,7 +28,7 @@ hooks:
       runas: root
     - location: bin/after-pull.sh
       timeout: 100
-      runas: jumbo
+      runas: root
   ApplicationStart:
     - location: bin/web-app-start.sh
       timeout: 60
