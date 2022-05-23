@@ -5,6 +5,7 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
   aws-ecr: circleci/aws-ecr@8.0.0
+  aws-code-deploy: circleci/aws-code-deploy@2.0.0
 
 
 parameters:
@@ -88,3 +89,11 @@ workflows:
             equal: [master, <<pipeline.git.branch>> ]
     jobs:
       - lint
+  deploy_application:
+    jobs:
+      - aws-code-deploy/deploy:
+          application-name: home-credit-risk
+          bundle-bucket: home-credit-risk-dev
+          bundle-key: deployment
+          deployment-group: dev
+          service-role-arn: code-deploy
