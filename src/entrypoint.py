@@ -2,7 +2,7 @@
 import fire
 
 from train import TrainingPipeline
-from data.data_loader import FileDataLoader
+from data.load import FileDataLoader
 from modelling.estimator import HeuristicEstimator
 
 

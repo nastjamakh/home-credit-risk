@@ -28,7 +28,7 @@ def queries_folder() -> Path:
 
 
 def aws_s3_bucket_name() -> str:
-    return "home-credit-risk"
+    return "home-credit-risk-dev"
 
 
 def dwh_connection() -> sqlalchemy.engine.base.Engine:

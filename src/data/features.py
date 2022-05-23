@@ -5,7 +5,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 from logger import time_and_log
-from data.data_loader import FileDataLoader
+from data.load import FileDataLoader
 
 
 class TargetData:
@@ -22,15 +22,19 @@ class TargetData:
         return self.dataset
 
 
-class ApplicationFeatures:
-
-    REQUIRED_DATASETS = ["applications"]
+class DataAggregator:
+    """Base data aggregator."""
 
     def __init__(self, data_io: Optional[FileDataLoader] = None, flow: str = "train"):
         if flow == "train":
             assert data_io is not None
             self.data_io = data_io
         self.flow_ = flow
+
+
+class ApplicationFeatures(DataAggregator):
+
+    REQUIRED_DATASETS = ["applications"]
 
     def handle_missing_values(
         self, df: pd.DataFrame, max_pct_missing: int = 40
@@ -67,7 +71,7 @@ class ApplicationFeatures:
         return df
 
     @time_and_log(False)
-    def generate(self, df: Optional[pd.DataFrame]) -> pd.DataFrame:
+    def generate(self, df: Optional[pd.DataFrame] = None) -> pd.DataFrame:
 
         if self.flow_ == "train":
             df = self.data_io["applications"].copy()

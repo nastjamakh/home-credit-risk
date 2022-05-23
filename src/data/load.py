@@ -171,7 +171,7 @@ class SQLDataLoader(DataLoader):
     engine = dwh_connection()
 
     def load_dataset(
-        self, dataset_name: str, limit: Optional[int] = None, reload=False
+        self, dataset_name: str, limit: Optional[int] = None, reload: bool = False
     ) -> pd.DataFrame:
         if (dataset_name not in self.datasets_) or reload:
             with self.engine.connect() as conn:
