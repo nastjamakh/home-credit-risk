@@ -6,15 +6,27 @@
 #   "CodeDeploy User Guide" at
 #   https://docs.aws.amazon.com/codedeploy/latest/userguide/app-spec-ref.html
 version: 0.0
+os: linux 
 # Specify "os: linux" if this revision targets Amazon Linux, 
 #   Red Hat Enterprise Linux (RHEL), or Ubuntu Server  
 #   instances.
 # Specify "os: windows" if this revision targets Windows Server instances.
 # (You cannot specify both "os: linux" and "os: windows".)
-os: linux 
+files:
+  - source: /
+    destination: ~/home-credit-risk
 hooks:
   BeforeInstall:
     - location: bin/docker-pull.sh
+      timeout: 300
+      runas: root
     - location: bin/docker-start.sh
-  ApplicationStart:
-    - location: make start
+      timeout: 300
+      runas: root
+    - location: bin/code-deploy/init.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: ./bin/docker-exec.sh ./bin/webserver-start.sh
+      timeout: 300
+      runas: root
