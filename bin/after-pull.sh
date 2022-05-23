@@ -2,7 +2,7 @@
 : "${PROJECT_NAME:=home-credit-risk}"
 
 # gi to project directory
-chmod -r 777 home-credit-risk
+chmod -R 755 home-credit-risk
 cd home-credit-risk
 
 # start container
