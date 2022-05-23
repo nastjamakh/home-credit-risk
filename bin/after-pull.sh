@@ -24,5 +24,4 @@ else
 fi
 
 # download latest model from S3
-docker exec -i $PROJECT_NAME echo $USER
 docker exec -i $PROJECT_NAME poetry run model load_from_s3
