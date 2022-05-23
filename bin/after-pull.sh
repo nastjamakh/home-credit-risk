@@ -1,6 +1,9 @@
 #!/bin/bash
 : "${PROJECT_NAME:=home-credit-risk}"
 
+# gi to project directory
+cd home-credit-risk
+
 # start container
 if docker ps -a |grep " $PROJECT_NAME$" ; then
     docker start $PROJECT_NAME
