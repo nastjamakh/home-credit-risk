@@ -83,6 +83,7 @@ workflows:
           bundle-key: deployment
           deployment-group: dev
           service-role-arn: code-deploy
+          requires: ["aws-ecr/build-and-push-image"]
 
 # workflows:
 #   rebuild_and_push_image:
