@@ -12,7 +12,7 @@ os: linux
 #   instances.
 # Specify "os: windows" if this revision targets Windows Server instances.
 # (You cannot specify both "os: linux" and "os: windows".)
-# files:
+files:
   - source: /
     destination: home-credit-risk
     overwrite: true
