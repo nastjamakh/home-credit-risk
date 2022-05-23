@@ -25,7 +25,7 @@ hooks:
     - location: bin/docker-start.sh
       timeout: 300
       runas: root
-    - location: bin/code-deploy/init.sh
+    - location: bin/init.sh
       timeout: 300
       runas: root
   ApplicationStart:
