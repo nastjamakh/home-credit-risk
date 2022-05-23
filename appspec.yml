@@ -25,10 +25,10 @@ hooks:
     - location: bin/docker-start.sh
       timeout: 300
       runas: root
-    - location: bin/init.sh
+    - location: bin/load-model-s3.sh
       timeout: 300
       runas: root
   ApplicationStart:
-    - location: ./bin/docker-exec.sh ./bin/webserver-start.sh
+    - location: bin/web-app-start.sh
       timeout: 300
       runas: root
