@@ -25,6 +25,3 @@ fi
 
 # download latest model from S3
 docker exec -i $PROJECT_NAME poetry run model load_from_s3
-
-# chmod all project
-docker exec -i home-credit-risk chmod -R 777 .
