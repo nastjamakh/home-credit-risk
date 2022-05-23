@@ -17,5 +17,5 @@ else
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
             /bin/bash
-  docker exec -i -t $PROJECT_NAME poetry install
+  docker exec -i $PROJECT_NAME poetry install
 fi
