@@ -50,6 +50,8 @@ class TrainingPipeline:
         estimator = NaiveEstimator()
         estimator.fit(X, y)
 
+        print(f"Upload to S3: {to_s3}")
+
         # serialize model
         estimator.save(to_s3=to_s3)
 

@@ -95,12 +95,6 @@ class NaiveEstimator(BaseEstimator):
         # Load from local file
         return Serializer().read(file_type="model", from_s3=from_s3)
 
-    # def __str__(self) -> str:
-    #     descr = ""
-    #     if self.is_fit:
-    #         descr = ", ".join([f"{k}={v}" for k, v in self.bins_map.items()])
-    #     return f"NaiveEstimator({descr})"
-
 
 def cli() -> None:
     """CLI interface for training and evaluation."""
