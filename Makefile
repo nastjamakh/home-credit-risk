@@ -6,6 +6,8 @@ PYTHON_INTERPRETER = python3
 SHELL = zsh
 PROJECT_NAME = "home-credit-risk"
 
+TO_S3=False
+
 setup_dev:
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
@@ -75,5 +77,5 @@ server:
 	./bin/docker-exec.sh ./bin/webserver-start.sh
 
 train:
-	./bin/docker-exec.sh poetry run train train --to_s3=$(to_s3)
+	./bin/docker-exec.sh poetry run train train --to_s3=$(TO_S3)
 
