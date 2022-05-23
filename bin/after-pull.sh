@@ -2,7 +2,7 @@
 : "${PROJECT_NAME:=home-credit-risk}"
 
 # start container
-elif docker ps -a |grep " $PROJECT_NAME$" ; then
+if docker ps -a |grep " $PROJECT_NAME$" ; then
     docker start $PROJECT_NAME
 else
   docker run -i -d \
