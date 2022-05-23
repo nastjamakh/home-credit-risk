@@ -1,8 +1,7 @@
 #!/bin/bash
 : "${PROJECT_NAME:=home-credit-risk}"
 
-if  docker ps | grep " $PROJECT_NAME$"; then
-    echo "Container already started. Do nothing"
+# start container
 elif docker ps -a |grep " $PROJECT_NAME$" ; then
     docker start $PROJECT_NAME
 else
@@ -17,5 +16,7 @@ else
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
             /bin/bash
-  docker exec -t -i $PROJECT_NAME poetry install
 fi
+
+# download latest model from S3
+docker exec -i $PROJECT_NAME poetry run model load_from_s3

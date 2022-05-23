@@ -22,11 +22,8 @@ hooks:
     - location: bin/docker-pull.sh
       timeout: 300
       runas: root
-    - location: bin/docker-start.sh
-      timeout: 300
-      runas: root
-    - location: bin/load-model-s3.sh
-      timeout: 300
+    - location: bin/after-pull.sh
+      timeout: 100
       runas: root
   ApplicationStart:
     - location: bin/web-app-start.sh
