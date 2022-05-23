@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "home-credit-risk"
-version = "0.3.0"
+version = "0.9.0"
 description = "End-to-end project for predicting probability of default on home credit loans."
 authors = ["nastjamakh <nastja.makhonina.dev@gmail.com>"]
 

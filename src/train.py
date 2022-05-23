@@ -5,8 +5,8 @@ from sklearn.model_selection import cross_validate
 import pandas as pd
 
 from data.features import ApplicationFeatures, TargetData
-from data.training_data import TrainingData
-from data.data_loader import FileDataLoader
+from data.pipeline import TrainingData
+from data.load import FileDataLoader
 from logger import logger, time_and_log
 from modelling.estimator import NaiveEstimator
 
