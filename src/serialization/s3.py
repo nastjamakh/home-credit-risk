@@ -48,7 +48,7 @@ class S3Handler:
             }
         )
         if not os.path.exists(dirname):
-            os.mkdir(dirname)
+            os.mkdir(config.work_dir() / dirname)
         self.bucket.download_file(filepath_s3, filepath_local)
 
     @time_and_log(False)
