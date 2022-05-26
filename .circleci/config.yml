@@ -59,7 +59,7 @@ workflows:
     jobs:
       - lint
       - aws-code-deploy/deploy:
-          application-name: home-credit-risk
+          application-name: hc
           bundle-bucket: home-credit-risk-dev
           bundle-key: deployment
           deployment-group: dev
