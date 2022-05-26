@@ -2,6 +2,9 @@ from pathlib import Path
 import os
 from typing import List
 import sqlalchemy
+from dotenv import load_dotenv
+
+load_dotenv()
 
 TITLE = "DOP Ranking"
 DESCRIPTION = "Rank drop of points based on demand and supply."

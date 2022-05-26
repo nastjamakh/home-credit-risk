@@ -69,15 +69,15 @@ workflows:
           skip-when-tags-exist: false
       - lint:
           requires: ["aws-ecr/build-and-push-image"]
-      - train:
-          requires: ["lint"]
       - aws-code-deploy/deploy:
           application-name: home-credit-risk
           bundle-bucket: home-credit-risk-dev
           bundle-key: deployment
           deployment-group: dev
           service-role-arn: code-deploy
-          requires: ["train"]
+
+    
+
 
 # workflows:
 #   rebuild_and_push_image:

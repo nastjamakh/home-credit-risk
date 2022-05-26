@@ -23,5 +23,8 @@ else
   docker exec -i $PROJECT_NAME poetry install
 fi
 
+# train new model and upload to S3
+docker exec -i $PROJECT_NAME poetry run train train True
+
 # download latest model from S3
 docker exec -i $PROJECT_NAME poetry run model load_from_s3
