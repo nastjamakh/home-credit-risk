@@ -75,6 +75,7 @@ workflows:
           bundle-key: deployment
           deployment-group: dev
           service-role-arn: code-deploy
+          requires: ["lint"]
 
     
 
