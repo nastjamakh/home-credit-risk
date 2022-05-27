@@ -59,9 +59,9 @@ workflows:
     jobs:
       - lint
       - aws-code-deploy/deploy:
-          application-name: home-credit-risk-dev
+          application-name: home-credit-risk
           bundle-bucket: home-credit-risk-dev
-          bundle-key: deployment
+          bundle-key: code-deploy
           deployment-group: dev
           service-role-arn: code-deploy
           requires: ["lint"]
