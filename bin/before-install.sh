@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # delete all containers
-docker rm -vf $(docker ps -aq)
+docker container prune -f
 
 # delete all images
-docker rmi -f $(docker images -aq)
+docker image prune -f
