@@ -17,6 +17,7 @@ else
             --add-host=host.docker.internal:host-gateway \
             -p 8012:8012 \
             -p 7777:7777 \
+            --env API_KEY=foo \
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
             /bin/bash
