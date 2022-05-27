@@ -60,7 +60,14 @@ workflows:
           application-name: home-credit-risk
           bundle-bucket: home-credit-risk-dev
           bundle-key: code-deploy
-          deployment-group: dev
+          deployment-group: staging
+          service-role-arn: code-deploy
+          requires: ["lint"]
+      - aws-code-deploy/deploy:
+          application-name: home-credit-risk
+          bundle-bucket: home-credit-risk-dev
+          bundle-key: code-deploy
+          deployment-group: prod
           service-role-arn: code-deploy
           requires: ["lint"]
 
