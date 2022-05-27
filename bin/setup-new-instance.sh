@@ -2,8 +2,8 @@
 
 # requirements
 sudo apt update
-sudo apt-get install build-essential
-sudo apt install git -y
+sudo apt-get install build-essential -y
+sudo apt install git -y curl wget
 
 # install brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -17,11 +17,19 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
 
-# install brew packages
-brew install curl wget docker
+# Docker
+sudo apt-get install docker.io -y
+source /etc/bash_completion.d/docker.io
+sudo service docker.io start
+
+# add current user to docker user group
+# to run docker commands without sudo
+sudo groupadd docker
+sudo gpasswd -a $USER docker
+sudo usermod -aG docker $USER
+# you should restart instance if still need sudo
 
 # install codedeploy agent with ruby 3
-sudo apt-get update
 sudo apt-get install ruby-full ruby-webrick wget -y
 cd /tmp
 wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/releases/codedeploy-agent_1.3.2-1902_all.deb
@@ -39,6 +47,3 @@ brew install pyenv pyenv-virtualenv
 pyenv install 3.10.4
 virtualenv 3.10.4 py310
 pyenv global py310
-
-# clone project repo
-git clone https://github.com/nastjamakh/home-credit-risk.git
