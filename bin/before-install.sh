@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# delete all containers
-docker container prune -f
+# stop and remove container
+docker stop home-credit-risk
+docker rm home-credit-risk
 
-# delete all images
-docker image prune -f
+# delete image
+docker rmi home-credit-risk
