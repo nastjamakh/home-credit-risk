@@ -29,6 +29,9 @@ hooks:
     - location: bin/after-pull.sh
       timeout: 100
       runas: root
+    - location: bin/train.sh
+      timeout: 300
+      runas: root
   ApplicationStart:
     - location: bin/web-app-start.sh
       timeout: 60
