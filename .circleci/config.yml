@@ -57,6 +57,7 @@ workflows:
     jobs:
       - lint
       - aws-code-deploy/deploy:
+          name: deploy-staging
           application-name: home-credit-risk
           bundle-bucket: home-credit-risk-dev
           bundle-key: code-deploy
