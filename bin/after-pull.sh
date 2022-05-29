@@ -2,8 +2,8 @@
 : "${PROJECT_NAME:=home-credit-risk}"
 
 # gi to project directory
-chmod -R 777 home-credit-risk
-cd home-credit-risk
+chmod -R 777 code
+cd code
 
 # start container
 if docker ps -a |grep " $PROJECT_NAME$" ; then
