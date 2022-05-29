@@ -45,8 +45,8 @@ def dwh_connection() -> sqlalchemy.engine.base.Engine:
         host="ml-cluster.cao3kphpeedo.us-east-1.redshift.amazonaws.com",
         port=5439,
         database="dev",
-        username=AWS_REDSHIFT_USERNAME,
-        password=AWS_REDSHIFT_PASSWORD,
+        username="admin",
+        password="1church-exit5PRESERVE",
     )
 
     engine = sqlalchemy.create_engine(url)
