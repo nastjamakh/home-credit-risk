@@ -55,6 +55,7 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
+      - lint
       - aws-ecr/build-and-push-image:
           name: build-and-push-image
           region: AWS_DEFAULT_REGION
@@ -66,8 +67,7 @@ workflows:
           public-registry: true
           repo: home-credit-risk
           skip-when-tags-exist: false
-      - lint:
-          requires: ["build-and-push-image"]
+          requires: ["lint"]
       - aws-code-deploy/deploy:
           name: deploy-staging
           application-name: home-credit-risk
@@ -75,7 +75,7 @@ workflows:
           bundle-key: code-deploy
           deployment-group: staging
           service-role-arn: code-deploy
-          requires: ["lint"]
+          requires: ["build-and-push-image"]
       - aws-code-deploy/deploy:
           name: deploy-production
           application-name: home-credit-risk
