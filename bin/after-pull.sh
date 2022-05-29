@@ -18,6 +18,8 @@ else
             -p 8012:8012 \
             -p 7777:7777 \
             --env API_KEY=foo \
+            --env AWS_REDSHIFT_USERNAME=$AWS_REDSHIFT_USERNAME \
+            --env AWS_REDSHIFT_PASSWORD=$AWS_REDSHIFT_PASSWORD \
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
             /bin/bash
