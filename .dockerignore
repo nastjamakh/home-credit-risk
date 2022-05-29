@@ -1,6 +1,5 @@
 .circleci
 .git
-.env
 .pytest_cache
 **/.ipynb_checkpoints
 **/.__pycache__

@@ -17,17 +17,9 @@ else
             --add-host=host.docker.internal:host-gateway \
             -p 8012:8012 \
             -p 7777:7777 \
-            --env API_KEY=foo \
-            --env AWS_REDSHIFT_USERNAME=$AWS_REDSHIFT_USERNAME \
-            --env AWS_REDSHIFT_PASSWORD=$AWS_REDSHIFT_PASSWORD \
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
             /bin/bash
   docker exec -i $PROJECT_NAME poetry install
 fi
 
-# train new model and upload to S3
-docker exec -i $PROJECT_NAME poetry run train train True
-
-# download latest model from S3
-docker exec -i $PROJECT_NAME poetry run model load_from_s3
