@@ -17,6 +17,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
 
+## configure aws account
+aws configure
+
 # Docker
 sudo apt-get install docker.io -y
 source /etc/bash_completion.d/docker.io
@@ -47,3 +50,6 @@ brew install pyenv pyenv-virtualenv
 pyenv install 3.10.4
 virtualenv 3.10.4 py310
 pyenv global py310
+
+
+# reboot instance to change docker permissions
