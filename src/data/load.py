@@ -61,21 +61,24 @@ class DatasetFilename(Enum):
             raise ValueError(f"No such dataset: {name}")
 
 
-class DatasetTablename(Enum):
+class DatasetName(Enum):
     """Map dataset names to table names in database."""
 
-    APPLICATIONS = "application_train"
+    APPLICATIONS = "applications"
     BUREAU_BALANCE = "bureau_balance"
     BUREAU = "bureau"
     CREDIT_CARD_BALANCE = "credit_card_balance"
     INSTALLMENTS_PAYMENTS = "installments_payments"
-    PREVIOUS_APPLICATIONS = "previous_application"
+    PREVIOUS_APPLICATIONS = "previous_applications"
     CASH_BALANCE = "pos_cash_balance"
 
     @classmethod
-    def from_name(cls, name: str) -> str:
-        if hasattr(DatasetTablename, name.upper()):
-            return getattr(DatasetTablename, name.upper()).value
+    def from_name(cls, name: str, file: bool = False) -> str:
+        if hasattr(DatasetName, name.upper()):
+            dataset_name = getattr(DatasetName, name.upper()).value
+            if file:
+                dataset_name += ".gzip"
+            return dataset_name
         else:
             raise ValueError(f"No such dataset: {name}")
 
@@ -170,13 +173,14 @@ class SQLDataLoader(DataLoader):
 
     engine = dwh_connection()
 
+    @time_and_log(True)
     def load_dataset(
         self, dataset_name: str, limit: Optional[int] = None, reload: bool = False
     ) -> pd.DataFrame:
         if (dataset_name not in self.datasets_) or reload:
             with self.engine.connect() as conn:
-                table_name = DatasetTablename.from_name(dataset_name)
-                limit_str = f" limit {limit}" if limit else "limit"
+                table_name = DatasetName.from_name(dataset_name)
+                limit_str = f" limit {limit}" if limit else ""
                 df = pd.read_sql(
                     f"SELECT * FROM public.{table_name}{limit_str}", con=conn
                 )

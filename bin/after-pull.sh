@@ -1,9 +1,12 @@
 #!/bin/bash
 : "${PROJECT_NAME:=home-credit-risk}"
 
-if  docker ps | grep " $PROJECT_NAME$"; then
-    echo "Container already started. Do nothing"
-elif docker ps -a |grep " $PROJECT_NAME$" ; then
+# gi to project directory
+chmod -R 777 code
+cd code
+
+# start container
+if docker ps -a |grep " $PROJECT_NAME$" ; then
     docker start $PROJECT_NAME
 else
   docker run -i -d \
@@ -17,5 +20,6 @@ else
             --name $PROJECT_NAME \
             -t $PROJECT_NAME:latest \
             /bin/bash
-  docker exec -t -i $PROJECT_NAME poetry install
+  docker exec -i $PROJECT_NAME poetry install
 fi
+

@@ -6,7 +6,7 @@ import pandas as pd
 
 from data.features import ApplicationFeatures, TargetData
 from data.pipeline import TrainingData
-from data.load import FileDataLoader
+from data.load import SQLDataLoader
 from logger import logger, time_and_log
 from modelling.estimator import NaiveEstimator
 
@@ -20,7 +20,7 @@ class TrainingPipeline:
     @time_and_log(False, "INFO")
     def generate_training_dataset() -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Create training dataset."""
-        data_io = FileDataLoader()
+        data_io = SQLDataLoader()
         data_io.load_dataset(dataset_name="applications")
 
         data_generator = TrainingData(
@@ -49,6 +49,8 @@ class TrainingPipeline:
         # train
         estimator = NaiveEstimator()
         estimator.fit(X, y)
+
+        print(f"Upload to S3: {to_s3}")
 
         # serialize model
         estimator.save(to_s3=to_s3)

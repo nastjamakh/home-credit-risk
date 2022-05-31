@@ -90,16 +90,16 @@ class NaiveEstimator(BaseEstimator):
         Serializer().write(file_id=model_path, obj=self, to_s3=to_s3)
 
     @time_and_log(False)
+    def load_from_s3(self) -> None:
+        """Download model from S3."""
+        # Load from local file
+        Serializer().read(file_type="model", from_s3=True)
+
+    @time_and_log(False)
     def load(self, from_s3: bool = False) -> Any:
         """Download model from S3."""
         # Load from local file
         return Serializer().read(file_type="model", from_s3=from_s3)
-
-    # def __str__(self) -> str:
-    #     descr = ""
-    #     if self.is_fit:
-    #         descr = ", ".join([f"{k}={v}" for k, v in self.bins_map.items()])
-    #     return f"NaiveEstimator({descr})"
 
 
 def cli() -> None:
