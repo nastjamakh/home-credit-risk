@@ -17,6 +17,7 @@ class NaiveEstimator(BaseEstimator):
     """Estimator that predicts an average probability of default given column bins."""
 
     DROP_COLS = ["sk_id_curr"]
+    MAX_BINS = 20
 
     @classmethod
     def name(cls) -> str:
@@ -41,10 +42,7 @@ class NaiveEstimator(BaseEstimator):
 
         for col in NaiveEstimator.get_numeric_columns(X).columns:
             # use 20 bins if number of unique valeus exceeds 20
-            if X[col].nunique() < 20:
-                q = X[col].nunique()
-            else:
-                q = 20
+            q = min(self.MAX_BINS, X[col].nunique())
 
             # apply and save qcut bins
             binned, bins_ = pd.qcut(
