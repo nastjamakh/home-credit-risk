@@ -1,12 +1,14 @@
 """Final estimator."""
 from datetime import datetime
 from typing import Any
-import pandas as pd
 
 import fire
+import pandas as pd
 import serialization.utils as utils
 from config import model_dir
-from logger import time_and_log
+from fastapi import HTTPException
+from logger import logger, time_and_log
+from sentry_sdk import capture_message
 from serialization.serializers import Serializer
 from sklearn.base import BaseEstimator
 
@@ -26,7 +28,8 @@ class NaiveEstimator(BaseEstimator):
         self.cat_map: dict = dict()
         self.margin: int = margin
 
-        self.is_fit = False
+        self.margin = margin
+        self.is_fit: bool = False
 
     @staticmethod
     def get_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -104,17 +107,19 @@ class NaiveEstimator(BaseEstimator):
         Serializer().write(file_id=model_path, obj=self, to_s3=to_s3)
 
     @time_and_log(False)
-    def load_from_s3(self) -> None:
+    def load(self, from_s3: bool = False) -> Any:
         """Download model from S3."""
         # Load from local file
-        Serializer().read(file_type="model", from_s3=True)
+        try:
+            model = Serializer().read(file_type="model", from_s3=from_s3)
+            logger.info(f"Loaded model: {model.name()}")
+            return model
+        except Exception:
+            error_msg = f"Could not load model {'from S3' if from_s3 else ''}"
 
-    @staticmethod
-    @time_and_log(False)
-    def load(from_s3: bool = False) -> Any:
-        """Download model from S3."""
-        # Load from local file
-        return Serializer().read(file_type="model", from_s3=from_s3)
+            # send alert to Sentry and raise an HTTP exception
+            capture_message(error_msg)
+            raise HTTPException(status_code=500, detail=error_msg)
 
 
 def cli() -> None:

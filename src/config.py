@@ -1,8 +1,11 @@
 from pathlib import Path
 import os
-from typing import List
 import sqlalchemy
 from dotenv import load_dotenv
+import sentry_sdk
+
+# Initialize Sentry SDK for alerting
+sentry_sdk.init(dsn=os.getenv("SENTRY_DNS", False), traces_sample_rate=1.0)
 
 load_dotenv()
 
@@ -56,9 +59,9 @@ def dwh_connection() -> sqlalchemy.engine.base.Engine:
 """" getters """
 
 
-def api_keys() -> List[str]:
+def api_key() -> str:
     """Returns list of valid API keys."""
-    return [v for k, v in os.environ.items() if k.startswith(API_KEY)]
+    return os.environ["API_KEY"]
 
 
 def work_dir() -> Path:
