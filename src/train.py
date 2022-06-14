@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 import fire
 from sklearn.model_selection import cross_validate
 import pandas as pd
+import numpy as np
 
 from data.features import ApplicationFeatures, TargetData
 from data.pipeline import TrainingData
@@ -77,6 +78,9 @@ class TrainingPipeline:
             "f1_macro": "f1_macro",
         }
         scores = cross_validate(estimator, X, y, cv=cv, scoring=scoring)
+        scores = {
+            metric: np.round(np.mean(scores), 4) for metric, scores in scores.items()
+        }
         logger.warning(
             {
                 "message": "Cross-validation results",
