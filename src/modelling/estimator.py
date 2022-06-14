@@ -10,36 +10,40 @@ from logger import time_and_log
 from serialization.serializers import Serializer
 from sklearn.base import BaseEstimator
 
-DEFAULT_THRESH = 0.081
-
 
 class NaiveEstimator(BaseEstimator):
     """Estimator that predicts an average probability of default given column bins."""
 
-    DROP_COLS = ["sk_id_curr"]
     MAX_BINS = 20
 
     @classmethod
     def name(cls) -> str:
         return "naive_estimator"
 
-    def __init__(self, margin: float = 0):
+    def __init__(self, margin: int = 0):
         self.bins_dict: dict = dict()
         self.bins_map: dict = dict()
+        self.cat_map: dict = dict()
+        self.margin: int = margin
 
-        self.margin = 0
         self.is_fit = False
 
     @staticmethod
     def get_numeric_columns(df: pd.DataFrame) -> pd.DataFrame:
         """Get a subset of data only with numeric columns."""
-        return df.select_dtypes("number").drop(NaiveEstimator.DROP_COLS, axis=1)
+        return df.select_dtypes("number")
+
+    @staticmethod
+    def get_categorical_columns(df: pd.DataFrame) -> pd.DataFrame:
+        """Get a subset of data only with categorical columns."""
+        return df.select_dtypes(object)
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
         """Create bins for all numeric columns and save default rate for each bin."""
         df = X.copy()
         df["target"] = y
 
+        # create bins for numeric features and save default rate
         for col in NaiveEstimator.get_numeric_columns(X).columns:
             # use 20 bins if number of unique valeus exceeds 20
             q = min(self.MAX_BINS, X[col].nunique())
@@ -51,6 +55,12 @@ class NaiveEstimator(BaseEstimator):
 
             self.bins_dict[col] = bins_
             self.bins_map[col] = df.groupby(binned).target.mean()
+
+        # save default rate for categorical features
+        for col in NaiveEstimator.get_categorical_columns(X).columns:
+            self.cat_map[col] = df.groupby(col).mean().target
+
+        self.default_avg_ = y.mean()
         self.is_fit = True
 
     def predict_proba(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -59,26 +69,32 @@ class NaiveEstimator(BaseEstimator):
 
         Return average of all columns.
         """
-        X_copy = X.copy()
-        for col in NaiveEstimator.get_numeric_columns(X).columns:
+        X_copy = X.copy().drop("sk_id_curr", axis=1)
+        for col in NaiveEstimator.get_numeric_columns(X_copy).columns:
             X_copy[col] = (
                 pd.cut(
-                    X[col], bins=self.bins_dict[col], labels=False, include_lowest=True
+                    X_copy[col],
+                    bins=self.bins_dict[col],
+                    labels=False,
+                    include_lowest=True,
                 )
                 .map(self.bins_map[col])
-                .fillna(DEFAULT_THRESH)
+                .fillna(self.default_avg_)
             )
+        for col in NaiveEstimator.get_categorical_columns(X_copy).columns:
+            X_copy[col] = X_copy[col].map(self.cat_map[col]).fillna(self.default_avg_)
 
-        prob_default = NaiveEstimator.get_numeric_columns(X_copy).mean(1)
+        # mean
+        prob_default = X_copy.mean(1)
 
-        probs = prob_default > DEFAULT_THRESH * (1 + self.margin)
-        return probs
+        return prob_default
 
     def predict(self, X: pd.DataFrame) -> pd.DataFrame:
         """Return 1 if expect default, 0 otherwise."""
 
         probs = self.predict_proba(X)
-        return probs.astype(int)
+        default = (probs > self.default_avg_ * (1 + self.margin / 100)).astype(int)
+        return default
 
     @time_and_log(False)
     def save(self, to_s3: bool = False) -> None:
@@ -93,8 +109,9 @@ class NaiveEstimator(BaseEstimator):
         # Load from local file
         Serializer().read(file_type="model", from_s3=True)
 
+    @staticmethod
     @time_and_log(False)
-    def load(self, from_s3: bool = False) -> Any:
+    def load(from_s3: bool = False) -> Any:
         """Download model from S3."""
         # Load from local file
         return Serializer().read(file_type="model", from_s3=from_s3)

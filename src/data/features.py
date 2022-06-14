@@ -63,7 +63,6 @@ class ApplicationFeatures(DataAggregator):
         if self.flow_ == "train":
             df.drop("target", axis=1, inplace=True)
             df = df.select_dtypes(include=np.number)
-        print(df)
 
         df = self.handle_missing_values(df)
         df = self.handle_outliers(df)
@@ -77,8 +76,6 @@ class ApplicationFeatures(DataAggregator):
             df = self.data_io["applications"].copy()
         else:
             assert df is not None
-
-        print("Samples: {}".format(len(df)))
 
         df = self.preprocess(df)
 

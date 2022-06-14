@@ -6,7 +6,7 @@ import pandas as pd
 
 from data.features import ApplicationFeatures, TargetData
 from data.pipeline import TrainingData
-from data.load import SQLDataLoader
+from data.load import SQLDataLoader, FileDataLoader
 from logger import logger, time_and_log
 from modelling.estimator import NaiveEstimator
 
@@ -18,9 +18,11 @@ class TrainingPipeline:
 
     @staticmethod
     @time_and_log(False, "INFO")
-    def generate_training_dataset() -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def generate_training_dataset(
+        from_sql: bool = False,
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Create training dataset."""
-        data_io = SQLDataLoader()
+        data_io = SQLDataLoader() if from_sql else FileDataLoader()
         data_io.load_dataset(dataset_name="applications")
 
         data_generator = TrainingData(
@@ -40,11 +42,11 @@ class TrainingPipeline:
 
     @classmethod
     @time_and_log(False)
-    def train(cls, to_s3: Optional[bool] = False) -> None:
+    def train(cls, to_s3: Optional[bool] = False, from_sql: bool = False) -> None:
         """Train."""
         logger.warning(f"Training Naive classifier. TO S3: {to_s3}")
 
-        X, y = TrainingPipeline.generate_training_dataset()
+        X, y = TrainingPipeline.generate_training_dataset(from_sql=from_sql)
 
         # train
         estimator = NaiveEstimator()
@@ -56,15 +58,14 @@ class TrainingPipeline:
         estimator.save(to_s3=to_s3)
 
     def load_model(self) -> None:
-        estimator = NaiveEstimator()
-        estimator.load(from_s3=True)
+        NaiveEstimator.load(from_s3=True)
 
     @classmethod
     @time_and_log(False)
-    def evaluate(cls, cv: int = 5) -> None:
+    def evaluate(cls, cv: int = 5, from_sql: bool = False) -> None:
         """Evaluate."""
         logger.info("Evaluating Naive classifier.")
-        X, y = TrainingPipeline.generate_training_dataset()
+        X, y = TrainingPipeline.generate_training_dataset(from_sql=from_sql)
 
         # train & eval
         estimator = NaiveEstimator()

@@ -36,7 +36,6 @@ class TrainingData:
 
     @time_and_log(False)
     def generate_training_dataset(self) -> pd.DataFrame:
-        print("Generating training dataset.")
         self.target.generate()
         for feature in self.features:
             feature.generate()
