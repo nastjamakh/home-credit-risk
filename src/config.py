@@ -3,6 +3,10 @@ import os
 from typing import List
 import sqlalchemy
 from dotenv import load_dotenv
+import sentry_sdk
+
+# Initialize Sentry SDK for alerting
+sentry_sdk.init(dsn=os.getenv("SENTRY_DNS", False), traces_sample_rate=1.0)
 
 load_dotenv()
 
