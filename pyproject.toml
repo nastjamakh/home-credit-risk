@@ -45,6 +45,10 @@ pyspark = "^3.2.1"
 SQLAlchemy = "^1.4.36"
 sqlalchemy-redshift = "^0.8.9"
 redshift-connector = "^2.0.907"
+chart-studio = "^1.1.0"
+marshmallow = "^3.16.0"
+altair = "^4.2.0"
+vega-datasets = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

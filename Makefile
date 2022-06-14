@@ -77,5 +77,8 @@ server:
 	./bin/docker-exec.sh ./bin/webserver-start.sh
 
 train:
-	./bin/docker-exec.sh poetry run train train --to_s3=$(TO_S3)
+	./bin/docker-exec.sh poetry run train train --to_s3=$(TO_S3) --from_sql=$(FROM_SQL)
+
+eval:
+	./bin/docker-exec.sh poetry run train evaluate
 
