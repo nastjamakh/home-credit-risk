@@ -47,7 +47,7 @@ async def authorize(request: fastapi.Request, call_next: Callable) -> Dict[str, 
         )
 
     # authorize the request
-    if request_key not in config.api_keys():
+    if request_key != config.api_key():
         return fastapi.responses.JSONResponse(
             status_code=403,
             content={"_error": "Contact #data-products for a valid API KEY"},
