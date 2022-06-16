@@ -61,6 +61,7 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
+      - ssh-into-ec2
       - lint
       - aws-code-deploy/deploy:
           name: deploy-staging
