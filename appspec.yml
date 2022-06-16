@@ -29,9 +29,6 @@ hooks:
     - location: bin/aws/after-pull.sh
       timeout: 100
       runas: root
-    - location: bin/aws/train.sh
-      timeout: 300
-      runas: root
   ApplicationStart:
     - location: bin/aws/web-app-start.sh
       timeout: 60

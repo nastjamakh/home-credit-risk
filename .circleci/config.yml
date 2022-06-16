@@ -25,15 +25,25 @@ executors:
     docker:
         - image: cimg/python:3.9.12
 
+commands:
+  ssh-into-ec2-staging:
+    description: "SSH into staging EC2 instance"
+    steps:
+      - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-34-202-229-149.compute-1.amazonaws.com
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  ssh-into-ec2:
+  staging-hello-world:
     executor: in_docker_image
     steps:
+      - ssh-into-ec2-staging
       - run:
-          name: SSH into staging instance
-          command: ssh -o StrictHostKeyChecking=no ubuntu@ec2-34-202-229-149.compute-1.amazonaws.com
+          name: Hello Worls
+          command: echo "HELLO WORLD"
+      - run:
+          name: exit instance
+          command: exit
   lint:
     executor: in_docker_image
     steps:
@@ -61,7 +71,7 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
-      - ssh-into-ec2
+      - staging-hello-world
       - lint
       - aws-code-deploy/deploy:
           name: deploy-staging
