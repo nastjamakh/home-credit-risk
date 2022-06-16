@@ -29,7 +29,7 @@ commands:
   ssh-into-ec2-staging:
     description: "SSH into staging EC2 instance"
     steps:
-      - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-34-202-229-149.compute-1.amazonaws.com \
+      - run: ssh -o StrictHostKeyChecking=no $EC2_STAGING_USER@$EC2_STAGING_PUBLIC_DNS \
               docker exec -i home-credit-risk poetry run train train True \
               exit
 
