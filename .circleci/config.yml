@@ -33,7 +33,7 @@ jobs:
     steps:
       - run:
           name: SSH into staging instance
-          command: ssh ec2-user@ec2-34.202.229.149.compute-1.amazonaws.com
+          command: ssh -o StrictHostKeyChecking=no ec2-user@ec2-34.202.229.149.compute-1.amazonaws.com
   lint:
     executor: in_docker_image
     steps:
