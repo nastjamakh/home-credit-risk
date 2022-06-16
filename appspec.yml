@@ -26,7 +26,7 @@ hooks:
     - location: bin/docker-pull.sh
       timeout: 300
       runas: root
-    - location: bin/aws/after-pull.sh
+    - location: bin/aws/docker-start.sh
       timeout: 100
       runas: root
   ApplicationStart:
