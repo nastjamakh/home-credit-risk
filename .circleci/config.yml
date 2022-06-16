@@ -54,7 +54,7 @@ jobs:
           command: echo "Skipping."
 
   lint:
-    executor: in_docker_image
+    executor: python
     steps:
       - run:
           name: Check syntax with flake8
@@ -80,6 +80,7 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
+      - lint
       - aws-ecr/build-and-push-image:
           name: rebuild-and-push-image
           region: AWS_DEFAULT_REGION
@@ -91,8 +92,7 @@ workflows:
           public-registry: true
           repo: home-credit-risk
           skip-when-tags-exist: false
-      - lint:
-          requires: ["rebuild-and-push-image"]
+          requires: ["lint"]
       - aws-code-deploy/deploy:
           name: deploy-staging
           application-name: home-credit-risk
