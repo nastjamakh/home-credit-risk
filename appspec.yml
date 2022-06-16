@@ -19,20 +19,20 @@ files:
 file_exists_behavior: OVERWRITE
 hooks:
   BeforeInstall:
-    - location: bin/before-install.sh
+    - location: bin/aws/before-install.sh
       timeout: 60
       runas: root
   AfterInstall:
     - location: bin/docker-pull.sh
       timeout: 300
       runas: root
-    - location: bin/after-pull.sh
+    - location: bin/aws/after-pull.sh
       timeout: 100
       runas: root
-    - location: bin/train.sh
+    - location: bin/aws/train.sh
       timeout: 300
       runas: root
   ApplicationStart:
-    - location: bin/web-app-start.sh
+    - location: bin/aws/web-app-start.sh
       timeout: 60
       runas: root

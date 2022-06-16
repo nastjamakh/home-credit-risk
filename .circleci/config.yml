@@ -28,6 +28,12 @@ executors:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  ssh-into-ec2:
+    executor: in_docker_image
+    steps:
+      - run:
+          name: SSH into staging instance
+          command: ssh ec2-user@ec2-34.202.229.149.compute-1.amazonaws.com
   lint:
     executor: in_docker_image
     steps:
