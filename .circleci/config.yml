@@ -30,7 +30,7 @@ commands:
     description: "SSH into staging EC2 instance"
     steps:
       - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-34-202-229-149.compute-1.amazonaws.com \
-              echo "HELLO WORLD" \
+              docker exec -i home-credit-risk poetry run train train True \
               exit
 
 # Define a job to be invoked later in a workflow.
