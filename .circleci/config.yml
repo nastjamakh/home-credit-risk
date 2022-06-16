@@ -29,21 +29,17 @@ commands:
   ssh-into-ec2-staging:
     description: "SSH into staging EC2 instance"
     steps:
-      - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-34-202-229-149.compute-1.amazonaws.com
+      - run: ssh -o StrictHostKeyChecking=no ubuntu@ec2-34-202-229-149.compute-1.amazonaws.com \
+              echo "HELLO WORLD" \
+              exit
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   staging-hello-world:
-    executor: in_docker_image
+    executor: python
     steps:
       - ssh-into-ec2-staging
-      - run:
-          name: Hello Worls
-          command: echo "HELLO WORLD"
-      - run:
-          name: exit instance
-          command: exit
   lint:
     executor: in_docker_image
     steps:
