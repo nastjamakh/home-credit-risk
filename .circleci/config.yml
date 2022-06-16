@@ -25,21 +25,34 @@ executors:
     docker:
         - image: cimg/python:3.9.12
 
-commands:
-  ssh-into-ec2-staging:
-    description: "SSH into staging EC2 instance"
-    steps:
-      - run: ssh -o StrictHostKeyChecking=no $EC2_STAGING_USER@$EC2_STAGING_PUBLIC_DNS \
-              docker exec -i home-credit-risk poetry run train train True \
-              exit
-
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  staging-hello-world:
+  train-staging:
     executor: python
     steps:
-      - ssh-into-ec2-staging
+      - run:
+          name: "SSH into staging EC2 instance"
+          command: ssh -o StrictHostKeyChecking=no $EC2_STAGING_USER@$EC2_STAGING_PUBLIC_DNS \
+                   docker exec -i home-credit-risk poetry run train train True \
+                   exit
+
+  train-production:
+    executor: python
+    steps:
+      - run:
+          name: "SSH into staging EC2 instance"
+          command: ssh -o StrictHostKeyChecking=no $EC2_STAGING_USER@$EC2_STAGING_PUBLIC_DNS \
+                   docker exec -i home-credit-risk poetry run train train True \
+                   exit
+
+  integration-tests-staging:
+    executor: python
+    steps:
+      - run:
+          name: "Integration tests on staging"
+          command: echo "Skipping."
+
   lint:
     executor: in_docker_image
     steps:
@@ -67,7 +80,6 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
-      - staging-hello-world
       - lint
       - aws-code-deploy/deploy:
           name: deploy-staging
@@ -77,6 +89,10 @@ workflows:
           deployment-group: staging
           service-role-arn: code-deploy
           requires: ["lint"]
+      - train-staging:
+          requires: ["deploy-staging"]
+      - integration-tests-staging:
+          requires: ["train-staging"]
       - aws-code-deploy/deploy:
           name: deploy-production
           application-name: home-credit-risk
@@ -84,9 +100,11 @@ workflows:
           bundle-key: code-deploy
           deployment-group: prod
           service-role-arn: code-deploy
-          requires: ["deploy-staging"]
+          requires: ["integration-tests-staging"]
+      - train-production:
+          requires: ["deploy-production"]
 
-    
+
 
 
 # workflows:
