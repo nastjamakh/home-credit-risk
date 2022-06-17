@@ -4,7 +4,7 @@ version: 2.1
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
-  aws-ecr: circleci/aws-ecr@8.0.0
+  aws-ecr: circleci/aws-ecr@8.1.2
   aws-code-deploy: circleci/aws-code-deploy@2.0.0
 
 
@@ -83,23 +83,22 @@ jobs:
             - run:
                 name: login to hub.docker.com
                 command: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/i9f8r4q1
+            - aws-ecr/build-and-push-image:
+                region: AWS_DEFAULT_REGION
+                aws-access-key-id: AWS_ACCESS_KEY_ID
+                aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+                registry-id: AWS_ECR_REGISTRY_ID
+                platform: linux/amd64
+                public-registry: true
+                repo: home-credit-risk
+                skip-when-tags-exist: false
 
 
 workflows:
   build_train_deploy:
     jobs:
       - lint
-      - aws-ecr/build-and-push-image:
-          name: build-and-push-image
-          region: AWS_DEFAULT_REGION
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          registry-id: AWS_ECR_REGISTRY_ID
-          executor: aws-ecr/default
-          platform: linux/amd64
-          public-registry: true
-          repo: home-credit-risk
-          skip-when-tags-exist: false
+      - build-and-push-image2
       - unit-tests
       - aws-code-deploy/deploy:
           name: deploy-staging
@@ -108,7 +107,7 @@ workflows:
           bundle-key: code-deploy
           deployment-group: staging
           service-role-arn: code-deploy
-          requires: ["build-and-push-image"]
+          requires: ["build-and-push-image2"]
       - train-staging:
           requires: ["deploy-staging"]
       - integration-tests-staging:

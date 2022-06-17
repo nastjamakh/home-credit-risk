@@ -6,3 +6,4 @@ os.environ["STAGE"] = "test"  # hardcode environment to test
 
 _TEST_DIR = Path(__file__).parent
 _MOCKS_DIR = _TEST_DIR / "mocks"
+_API_KEY_TEST = "foo"
