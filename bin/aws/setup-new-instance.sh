@@ -28,8 +28,6 @@ aws configure
 
 # Docker
 sudo apt-get install docker.io -y
-source /etc/bash_completion.d/docker.io
-sudo service docker.io start
 
 ## add current user to docker user group
 ## to run docker commands without sudo

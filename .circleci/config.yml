@@ -20,7 +20,7 @@ executors:
     working_directory: /app/home-credit-risk
   python:
     docker:
-        - image: cimg/python:3.9.12
+      - image: cimg/python:3.9.12
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -68,7 +68,8 @@ jobs:
           command: poetry run pytest
 
   build-and-push-image:
-    executor: python
+    machine:
+      image: ubuntu-2004:current
     steps:
       - when:
           condition:
@@ -105,42 +106,3 @@ workflows:
           requires: ["integration-tests-staging"]
       - train-production:
           requires: ["deploy-production"]
-
-
-
-
-# workflows:
-#   rebuild_and_push_image:
-#     when:
-#       or:
-#         - equal: [true, <<pipeline.parameters.rebuild-image>> ]
-#         - equal: [master, <<pipeline.git.branch>> ]
-#     jobs:
-#       - aws-ecr/build-and-push-image:
-#           region: AWS_DEFAULT_REGION
-#           aws-access-key-id: AWS_ACCESS_KEY_ID
-#           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-#           registry-id: AWS_ECR_REGISTRY_ID
-#           executor: aws-ecr/default
-#           platform: linux/amd64
-#           public-registry: true
-#           repo: home-credit-risk
-#           skip-when-tags-exist: false
-#       - lint:
-#           requires: ["aws-ecr/build-and-push-image"]
-#   no_image_rebuild:
-#     when:
-#       and:
-#         - equal: [false, <<pipeline.parameters.rebuild-image>> ]
-#         - not:
-#             equal: [master, <<pipeline.git.branch>> ]
-#     jobs:
-#       - lint
-#   deploy_application:
-#     jobs:
-#       - aws-code-deploy/deploy:
-#           application-name: home-credit-risk
-#           bundle-bucket: home-credit-risk-dev
-#           bundle-key: deployment
-#           deployment-group: dev
-#           service-role-arn: code-deploy
