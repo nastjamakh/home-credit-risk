@@ -54,7 +54,7 @@ jobs:
           command: echo "Skipping."
 
   lint:
-    executor: in_docker_image
+    executor: python
     steps:
       - run:
           name: Check syntax with flake8
@@ -70,7 +70,7 @@ jobs:
           name: Generate coverage data
           command: poetry run pytest
 
-  conditional-job:
+  rebuild-image:
     executor: python
     steps:
       - when:
@@ -85,8 +85,9 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
-      - conditional-job
       - lint
+      - rebuild-image:
+          requires: ["lint"]
       - aws-code-deploy/deploy:
           name: deploy-staging
           application-name: home-credit-risk
@@ -94,7 +95,7 @@ workflows:
           bundle-key: code-deploy
           deployment-group: staging
           service-role-arn: code-deploy
-          requires: ["lint"]
+          requires: ["rebuild-image"]
       - train-staging:
           requires: ["deploy-staging"]
       - integration-tests-staging:
