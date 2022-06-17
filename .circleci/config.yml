@@ -68,7 +68,7 @@ jobs:
           command: poetry run pytest
 
 
-  build-and-push-image:
+  build-and-push-image2:
     executor: in_docker_image
     steps:
       - when:
@@ -88,7 +88,17 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
-      - build-and-push-image
+      - aws-ecr/build-and-push-image:
+          name: build-and-push-image
+          region: AWS_DEFAULT_REGION
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          registry-id: AWS_ECR_REGISTRY_ID
+          executor: aws-ecr/default
+          platform: linux/amd64
+          public-registry: true
+          repo: home-credit-risk
+          skip-when-tags-exist: false
       - aws-code-deploy/deploy:
           name: deploy-staging
           application-name: home-credit-risk
