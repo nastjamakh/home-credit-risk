@@ -70,10 +70,22 @@ jobs:
           name: Generate coverage data
           command: poetry run pytest
 
+  conditional-job:
+    executor: python
+    steps:
+      - when:
+          condition:
+            or:
+              - equal: [ master, << pipeline.git.branch >> ]
+              - equal: [ true, << pipeline.parameters.rebuild-image >> ]
+          steps:
+            - run: echo "I am on master OR rebuild-image is true"
+
 
 workflows:
   build_train_deploy:
     jobs:
+      - conditional-job
       - lint
       - aws-code-deploy/deploy:
           name: deploy-staging
