@@ -12,9 +12,6 @@ parameters:
   rebuild-image:
     type: boolean
     default: false
-  train:
-    type: boolean
-    default: false
 
 executors:
   in_docker_image:
@@ -70,7 +67,7 @@ jobs:
           name: Generate coverage data
           command: poetry run pytest
 
-  rebuild-image:
+  build-and-push-image:
     executor: python
     steps:
       - when:
@@ -85,9 +82,7 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
-      - lint
-      - rebuild-image:
-          requires: ["lint"]
+      - build-and-push-image
       - aws-code-deploy/deploy:
           name: deploy-staging
           application-name: home-credit-risk
@@ -95,7 +90,7 @@ workflows:
           bundle-key: code-deploy
           deployment-group: staging
           service-role-arn: code-deploy
-          requires: ["rebuild-image"]
+          requires: ["build-and-push-image"]
       - train-staging:
           requires: ["deploy-staging"]
       - integration-tests-staging:
