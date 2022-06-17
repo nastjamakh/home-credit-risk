@@ -60,7 +60,7 @@ jobs:
           name: Check syntax with black
           command: poetry run black src
 
-  test-and-check-coverage:
+  unit-tests:
     executor: in_docker_image
     steps:
       - run:
@@ -88,6 +88,7 @@ jobs:
 workflows:
   build_train_deploy:
     jobs:
+      - lint
       - aws-ecr/build-and-push-image:
           name: build-and-push-image
           region: AWS_DEFAULT_REGION
@@ -99,6 +100,7 @@ workflows:
           public-registry: true
           repo: home-credit-risk
           skip-when-tags-exist: false
+      - unit-tests
       - aws-code-deploy/deploy:
           name: deploy-staging
           application-name: home-credit-risk
