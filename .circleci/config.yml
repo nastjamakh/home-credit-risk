@@ -77,7 +77,7 @@ jobs:
               - equal: [ master, << pipeline.git.branch >> ]
               - equal: [ true, << pipeline.parameters.rebuild-image >> ]
           steps:
-            - run: docker build --no-cache --platform linux/amd64 -t home-credit-risk .
+            - run: ls
 
 
 workflows:
