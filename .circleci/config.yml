@@ -67,9 +67,9 @@ jobs:
           name: Generate coverage data
           command: poetry run pytest
 
+
   build-and-push-image:
-    machine:
-      image: ubuntu-2004:current
+    executor: in_docker_image
     steps:
       - when:
           condition:
@@ -77,7 +77,12 @@ jobs:
               - equal: [ master, << pipeline.git.branch >> ]
               - equal: [ true, << pipeline.parameters.rebuild-image >> ]
           steps:
-            - run: ls
+            - checkout
+            - setup_remote_docker:
+                docker_layer_caching: false
+            - run:
+                name: login to hub.docker.com
+                command: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/i9f8r4q1
 
 
 workflows:
