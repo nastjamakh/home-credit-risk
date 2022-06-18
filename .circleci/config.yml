@@ -17,7 +17,7 @@ executors:
   in_docker_image:
     docker:
       - image: public.ecr.aws/i9f8r4q1/home-credit-risk:latest
-    working_directory: /app/home-credit-risk
+    working_directory: /opt/home-credit-risk
   python:
     docker:
       - image: cimg/python:3.9.12
