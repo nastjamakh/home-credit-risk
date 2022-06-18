@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from modelling.estimator import NaiveEstimator
 import pandas as pd
 
-import src.config as config
+import config
 from .schemas import ApplicationData, ResponseData, ApplicationSingle
 from data.features import ApplicationFeatures
 
