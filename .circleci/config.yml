@@ -102,7 +102,8 @@ workflows:
           public-registry: true
           repo: home-credit-risk
           skip-when-tags-exist: false
-      - unit-tests
+      - unit-tests:
+          requires: ["build-and-push-image"]
       - aws-code-deploy/deploy:
           name: deploy-staging
           application-name: home-credit-risk
@@ -110,7 +111,7 @@ workflows:
           bundle-key: code-deploy
           deployment-group: staging
           service-role-arn: code-deploy
-          requires: ["build-and-push-image"]
+          requires: ["build-and-push-image", "unit-tests"]
       - train-staging:
           requires: ["deploy-staging"]
       - integration-tests-staging:
