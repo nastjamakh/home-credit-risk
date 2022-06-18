@@ -92,7 +92,16 @@ workflows:
   build_train_deploy:
     jobs:
       - lint
-      - build-and-push-image2
+      - aws-ecr/build-and-push-image:
+          name: build-and-push-image
+          region: AWS_DEFAULT_REGION
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          registry-id: AWS_ECR_REGISTRY_ID
+          platform: linux/amd64
+          public-registry: true
+          repo: home-credit-risk
+          skip-when-tags-exist: false
       - unit-tests
       - aws-code-deploy/deploy:
           name: deploy-staging
@@ -101,7 +110,7 @@ workflows:
           bundle-key: code-deploy
           deployment-group: staging
           service-role-arn: code-deploy
-          requires: ["build-and-push-image2"]
+          requires: ["build-and-push-image"]
       - train-staging:
           requires: ["deploy-staging"]
       - integration-tests-staging:
