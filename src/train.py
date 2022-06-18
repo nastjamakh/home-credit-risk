@@ -18,7 +18,7 @@ class TrainingPipeline:
     """Training pipeline."""
 
     @staticmethod
-    @time_and_log(False, "INFO")
+    @time_and_log(True, "INFO")
     def generate_training_dataset(
         from_sql: bool = False,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
