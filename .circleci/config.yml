@@ -77,7 +77,6 @@ jobs:
               - equal: [ master, << pipeline.git.branch >> ]
               - equal: [ true, << pipeline.parameters.rebuild-image >> ]
           steps:
-            - checkout
             - setup_remote_docker:
                 docker_layer_caching: false
             - run:
